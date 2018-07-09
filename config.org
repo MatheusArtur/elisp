@@ -1,0 +1,100 @@
+* Basic configs
+** Toolbar, menu and Scrollbar
+#+BEGIN_SRC emacs-lisp
+(tool-bar-mode -1)
+(menu-bar-mode -1)
+(scroll-bar-mode -1) 
+#+END_SRC
+** Replace Yes/No alias to y/n
+#+BEGIN_SRC emacs-lisp
+(defalias 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+** Scrolls one line per time. instead of the retarded default
+#+BEGIN_SRC emacs-lisp
+(setq scroll-conservatively 100)
+#+END_SRC
+** Disable auto-save and backup files
+#+BEGIN_SRC emacs-lisp
+(setq make-save-default nil)
+(setq make-backup-file nil)
+#+END_SRC
+** Hightline cursor line
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t)
+#+END_SRC
+** Removes annoying ring bell
+#+BEGIN_SRC emacs-lisp
+(setq ring-bell-function 'ignore)
+#+END_SRC
+** Enable "pretty simbols" like lambda
+#+BEGIN_SRC emacs-lisp
+(when window-system (global-prettify-symbols-mode t))
+#+END_SRC
+** Disables startup messages
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+#+END_SRC
+* Terminal
+** Set Bash as default shell
+#+BEGIN_SRC emacs-lisp
+(defvar term "/bin/bash")
+(defadvice ansi-term (before force-bash)
+  (interactive (list term)))
+(ad-activate 'ansi-term)
+#+END_SRC
+** Map Super+Enter to terminal
+#+BEGIN_SRC emacs-lisp
+(when window-system (global-set-key (kbd "<s-return>") 'ansi-term))
+#+END_SRC
+* Packages 
+** Org
+*** Org bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda  () (org-bullets-mode))))
+#+END_SRC
+** Which-key
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :init
+  (which-key-mode))
+#+END_SRC
+** Beacon
+#+BEGIN_SRC emacs-lisp
+(use-package beacon
+  :ensure t
+  :init
+  (beacon-mode 1))
+#+END_SRC
+* IDO mode, buffer and file navigation 
+** Enable IDO mode
+#+BEGIN_SRC emacs-lisp
+(setq ido-enable-flex-matching nil)
+(setq ido-create-new-buffer 'always)
+(setq ido-everywhere t)
+(ido-mode 1)
+#+END_SRC
+** IDO vertical mode
+#+BEGIN_SRC emacs-lisp
+  (use-package ido-vertical-mode
+    :ensure t
+    :init
+    (ido-vertical-mode 1))
+  (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+#+END_SRC 
+** SMEX, completion for M-x
+#+BEGIN_SRC emacs-lisp
+  (use-package smex
+    :ensure t
+    :init (smex-initialize)
+    :bind
+    ("M-x" . smex))
+#+END_SRC
+** Setup Ibuffer, a non-retard buffer navigator
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+  (setq ibuffer-expert t)
+#+END_SRC
