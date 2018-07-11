@@ -25,10 +25,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes (quote (spacemacs-dark)))
+ '(custom-enabled-themes (quote (avk-darkblue-yellow)))
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "c30d153e623dfe32184857790a0cad243b979e8b1104e057c4a6ffe2210856f7" default)))
+    ("08f5da7e1f5064a2917af94f0dab946adfb25665b25450168ded749ec78a1145" "cde05ed51346d6925d29311fb131511115ae7612764297077ca1b61371e6b047" "bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" "c30d153e623dfe32184857790a0cad243b979e8b1104e057c4a6ffe2210856f7" default)))
  '(package-selected-packages
    (quote
     (smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package))))
