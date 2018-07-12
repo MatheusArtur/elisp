@@ -58,6 +58,14 @@
      (setq dashboard-items '((recents . 10)))
      (setq dashboard-banner-logo-title "Workflow Ideal"))
  #+END_SRC
+** UTF-8
+#+BEGIN_SRC emacs-lisp
+(setq locale-coding-system 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+#+END_SRC
 * Terminal
 ** Set Bash as default shell
 #+BEGIN_SRC emacs-lisp
@@ -99,6 +107,21 @@
     :ensure t
     :bind
     ("M-s" . avy-goto-char))
+#+END_SRC
+** Dmenu
+#+BEGIN_SRC emacs-lisp
+(use-package dmenu
+  :ensure t
+  :bind
+    ("s-d" . 'dmenu))
+#+END_SRC
+** Lines in codes
+#+BEGIN_SRC emacs-lisp
+(use-package linum-relative
+  :ensure t
+  :config
+    (setq linum-relative-current-symbol "")
+    (add-hook 'prog-mode-hook 'linum-relative-mode))
 #+END_SRC
 * IDO mode, buffer and file navigation 
 ** Enable IDO mode
@@ -142,9 +165,18 @@
 * Status Bar
 ** Battery
 #+BEGIN_SRC emacs-lisp
-(display-battery-mode 1)
+(use-package fancy-battery
+  :ensure t
+  :config
+    (setq fancy-battery-show-percentage t)
+    (setq battery-update-interval 15)
+    (if window-system
+      (fancy-battery-mode)
+      (display-battery-mode)))
 #+END_SRC
 ** Time and date
 #+BEGIN_SRC emacs-lisp
 (display-time-mode 1)
+(setq display-time-24hr-format t)
+(setq display-time-format "%H:%M - %d %B %Y")
 #+END_SRC
