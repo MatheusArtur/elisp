@@ -48,6 +48,16 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
   (global-set-key (kbd "C-c r") 'config-reload)
 #+END_SRC
+** DashBoard
+ #+BEGIN_SRC emacs-lisp
+   (use-package dashboard
+     :ensure t
+     :config
+     (dashboard-setup-startup-hook)
+     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
+     (setq dashboard-items '((recents . 10)))
+     (setq dashboard-banner-logo-title "Workflow Ideal"))
+ #+END_SRC
 * Terminal
 ** Set Bash as default shell
 #+BEGIN_SRC emacs-lisp
@@ -120,3 +130,21 @@
   (setq ibuffer-expert t)
 #+END_SRC
 
+* EXWM
+** Basico
+#+BEGIN_SRC emacs-lisp
+  (use-package exwm
+    :ensure t
+    :config
+    (require 'exwm-config)
+    (exwm-config-default))
+#+END_SRC
+* Status Bar
+** Battery
+#+BEGIN_SRC emacs-lisp
+(display-battery-mode 1)
+#+END_SRC
+** Time and date
+#+BEGIN_SRC emacs-lisp
+(display-time-mode 1)
+#+END_SRC
