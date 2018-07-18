@@ -98,6 +98,19 @@
     (other-window 1))
   (global-set-key (kbd "C-x 2") 'horizontal-win)
 #+END_SRC
+** Subword (Nice for VarOld) M-b would go for the Uppercase letter
+#+BEGIN_SRC emacs-lisp
+(global-subword-mode 1)
+  #+END_SRC
+** Match
+#+BEGIN_SRC emacs-lisp
+  (setq electric-pair-pairs '(
+                             (?\( . ?\))
+                             (?\[ . ?\])
+                             (?\" . ?\")
+                             (?\{ . ?\})))
+  (electric-pair-mode t)
+#+END_SRC
 * Terminal
 ** Set Bash as default shell
 #+BEGIN_SRC emacs-lisp
@@ -118,6 +131,10 @@
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda  () (org-bullets-mode))))
+#+END_SRC
+*** Highlight
+#+BEGIN_SRC emacs-lisp
+(setq org-src-fontify-natively t)
 #+END_SRC
 ** Which-key
 #+BEGIN_SRC emacs-lisp
