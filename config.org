@@ -102,7 +102,7 @@
 #+BEGIN_SRC emacs-lisp
 (global-subword-mode 1)
   #+END_SRC
-** Match
+** Matching (), "", {}, [].
 #+BEGIN_SRC emacs-lisp
   (setq electric-pair-pairs '(
                              (?\( . ?\))
@@ -110,6 +110,20 @@
                              (?\" . ?\")
                              (?\{ . ?\})))
   (electric-pair-mode t)
+#+END_SRC
+** Kill whole-word
+#+BEGIN_SRC emacs-lisp
+  (defun kill-word-function ()
+    (interactive)
+    (backward-word)
+    (kill-word 1))
+  (global-set-key (kbd "C-c w") 'kill-word-function)
+
+#+END_SRC
+** Lines and column numbers
+#+BEGIN_SRC emacs-lisp
+  (line-number-mode 1)
+  (column-number-mode 1)
 #+END_SRC
 * Terminal
 ** Set Bash as default shell
@@ -172,6 +186,18 @@
     (setq linum-relative-current-symbol "")
     (add-hook 'prog-mode-hook 'linum-relative-mode))
 #+END_SRC
+** Hungry delete
+#+BEGIN_SRC emacs-lisp
+  (use-package hungry-delete
+    :ensure t
+    :config (global-hungry-delete-mode))
+#+END_SRC
+** Sudo edit
+#+BEGIN_SRC emacs-lisp
+  (use-package sudo-edit
+    :ensure t
+    :bind ("s-e" . sudo-edit))
+#+END_SRC
 * IDO mode, buffer and file navigation 
 ** Enable IDO mode
 #+BEGIN_SRC emacs-lisp
@@ -202,6 +228,13 @@
   (setq ibuffer-expert t)
 #+END_SRC
 
+** C-x k kills the current buffer
+#+BEGIN_SRC emacs-lisp
+  (defun murder-buffer ()
+    (interactive)
+    (kill-buffer (current-buffer)))
+  (global-set-key (kbd "C-x k") 'murder-buffer)
+#+END_SRC
 * EXWM
 ** Basico
 #+BEGIN_SRC emacs-lisp
