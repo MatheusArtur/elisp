@@ -56,7 +56,7 @@
      (dashboard-setup-startup-hook)
      (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
      (setq dashboard-items '((recents . 10)))
-     (setq dashboard-banner-logo-title "Workflow Ideal"))
+     (setq dashboard-banner-logo-title "Gentoo part two eletric bogaloo"))
  #+END_SRC
 ** UTF-8
 #+BEGIN_SRC emacs-lisp
@@ -138,18 +138,6 @@
 (when window-system (global-set-key (kbd "<s-return>") 'ansi-term))
 #+END_SRC
 * Packages 
-** Org
-*** Org bullets
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :config
-    (add-hook 'org-mode-hook (lambda  () (org-bullets-mode))))
-#+END_SRC
-*** Highlight
-#+BEGIN_SRC emacs-lisp
-(setq org-src-fontify-natively t)
-#+END_SRC
 ** Which-key
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
@@ -198,6 +186,13 @@
     :ensure t
     :bind ("s-e" . sudo-edit))
 #+END_SRC
+** Highlight syntax-pairs (), {}, [], etc..
+#+BEGIN_SRC emacs-lisp
+  (use-package rainbow-delimiters
+    :ensure t
+    :init
+    (rainbow-delimiters-mode 1))
+#+END_SRC
 * IDO mode, buffer and file navigation 
 ** Enable IDO mode
 #+BEGIN_SRC emacs-lisp
@@ -227,7 +222,6 @@
   (global-set-key (kbd "C-x C-b") 'ibuffer)
   (setq ibuffer-expert t)
 #+END_SRC
-
 ** C-x k kills the current buffer
 #+BEGIN_SRC emacs-lisp
   (defun murder-buffer ()
@@ -261,4 +255,34 @@
 (display-time-mode 1)
 (setq display-time-24hr-format t)
 (setq display-time-format "%H:%M - %d %B %Y")
+#+END_SRC
+* Org
+** Org bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda  () (org-bullets-mode))))
+#+END_SRC
+** Highlight SRC syntax
+#+BEGIN_SRC emacs-lisp
+(setq org-src-fontify-natively t)
+#+END_SRC
+** Macro programing languages SRC cases
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-structure-template-alist
+               '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+#+END_SRC
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'org-structure-template-alist
+               '("cc" "#+BEGIN_SRC c\n?\n#+END_SRC"))
+#+END_SRC
+
+* Company-autocomplete
+** 0 delay, 1 char-prefix to work
+#+BEGIN_SRC emacs-lisp
+      (use-package company
+        :ensure t
+        :init
+        (add-hook 'after-init-hook 'global-company-mode))
 #+END_SRC

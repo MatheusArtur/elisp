@@ -36,7 +36,7 @@
  '(fci-rule-color "#222222")
  '(package-selected-packages
    (quote
-    (eziam-theme sudo-edit hungry-delete goose-theme switch-window linum-relative sunrise-x-modeline sunrise-x-buttons sunrise-commander dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package)))
+    (company-irony company rainbow-delimiters eziam-theme sudo-edit hungry-delete goose-theme switch-window linum-relative sunrise-x-modeline sunrise-x-buttons sunrise-commander dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package)))
  '(pdf-view-midnight-colors (quote ("#ffffff" . "#222222")))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -46,4 +46,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 98 :width normal :foundry "1ASC" :family "xos4 Terminus")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 100 :width normal :foundry "xos4" :family "xos4 Terminus")))))
