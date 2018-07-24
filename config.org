@@ -125,6 +125,10 @@
   (line-number-mode 1)
   (column-number-mode 1)
 #+END_SRC
+** Highlight syntax-pairs (), {}, [], etc..
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode 1)
+#+END_SRC
 * Terminal
 ** Set Bash as default shell
 #+BEGIN_SRC emacs-lisp
@@ -185,13 +189,6 @@
   (use-package sudo-edit
     :ensure t
     :bind ("s-e" . sudo-edit))
-#+END_SRC
-** Highlight syntax-pairs (), {}, [], etc..
-#+BEGIN_SRC emacs-lisp
-  (use-package rainbow-delimiters
-    :ensure t
-    :init
-    (rainbow-delimiters-mode 1))
 #+END_SRC
 * IDO mode, buffer and file navigation 
 ** Enable IDO mode
@@ -279,10 +276,19 @@
 #+END_SRC
 
 * Company-autocomplete
-** 0 delay, 1 char-prefix to work
 #+BEGIN_SRC emacs-lisp
-      (use-package company
-        :ensure t
-        :init
-        (add-hook 'after-init-hook 'global-company-mode))
+  (use-package company
+    :ensure t
+    :config
+    (setq company-idle-delay 0)
+    (setq company-minimum-prefix-length 1))
+
+  (add-hook 'after-init-hook 'global-company-mode)
+
+  (with-eval-after-load 'company
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") #'company-select-next)
+    (define-key company-active-map (kbd "C-p") #'company-select-previous)
+    (define-key company-active-map (kbd "SPC") #'company-abort))
 #+END_SRC
