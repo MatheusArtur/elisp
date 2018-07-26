@@ -1,3 +1,5 @@
+#+STARTUP: overview
+#+TITLE: GNU/Emacs configuration.
 * Basic configs
 ** Toolbar, menu and Scrollbar
 #+BEGIN_SRC emacs-lisp
@@ -48,16 +50,6 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
   (global-set-key (kbd "C-c r") 'config-reload)
 #+END_SRC
-** DashBoard
- #+BEGIN_SRC emacs-lisp
-   (use-package dashboard
-     :ensure t
-     :config
-     (dashboard-setup-startup-hook)
-     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
-     (setq dashboard-items '((recents . 10)))
-     (setq dashboard-banner-logo-title "Gentoo part two eletric bogaloo"))
- #+END_SRC
 ** UTF-8
 #+BEGIN_SRC emacs-lisp
 (setq locale-coding-system 'utf-8)
@@ -118,7 +110,6 @@
     (backward-word)
     (kill-word 1))
   (global-set-key (kbd "C-c w") 'kill-word-function)
-
 #+END_SRC
 ** Lines and column numbers
 #+BEGIN_SRC emacs-lisp
@@ -163,6 +154,16 @@
     :bind
     ("M-s" . avy-goto-char))
 #+END_SRC
+** DashBoard
+ #+BEGIN_SRC emacs-lisp
+   (use-package dashboard
+     :ensure t
+     :config
+     (dashboard-setup-startup-hook)
+     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
+     (setq dashboard-items '((recents . 10)))
+     (setq dashboard-banner-logo-title "Gentoo part two eletric bogaloo"))
+ #+END_SRC
 ** Dmenu
 #+BEGIN_SRC emacs-lisp
 (use-package dmenu
@@ -247,12 +248,13 @@
 #+END_SRC
 ** Hiding some minor modes
 #+BEGIN_SRC emacs-lisp
-  (use-package diminish
-    :ensure t
-    :init
-    (diminish 'hungry-delete-mode)
-    (diminish 'beacon-mode)
-    (diminish 'which-key-mode))
+    (use-package diminish
+      :ensure t
+      :init
+      (diminish 'hungry-delete-mode)
+      (diminish 'beacon-mode)
+      (diminish 'subword-mode)
+      (diminish 'which-key-mode))
 #+END_SRC
 ** Battery
 #+BEGIN_SRC emacs-lisp
