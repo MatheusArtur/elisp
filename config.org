@@ -227,7 +227,7 @@
   (global-set-key (kbd "C-x k") 'murder-buffer)
 #+END_SRC
 * EXWM
-** Basico
+** Package
 #+BEGIN_SRC emacs-lisp
   (use-package exwm
     :ensure t
@@ -235,7 +235,25 @@
     (require 'exwm-config)
     (exwm-config-default))
 #+END_SRC
-* Status Bar
+* Powerline
+** Modeline(spaceline)
+#+BEGIN_SRC emacs-lisp
+    (use-package spaceline
+      :ensure t
+      :config
+      (require 'spaceline-config)
+      (setq powerline-default-separator (quote arrow))
+      (spaceline-spacemacs-theme))
+#+END_SRC
+** Hiding some minor modes
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :ensure t
+    :init
+    (diminish 'hungry-delete-mode)
+    (diminish 'beacon-mode)
+    (diminish 'which-key-mode))
+#+END_SRC
 ** Battery
 #+BEGIN_SRC emacs-lisp
 (use-package fancy-battery
@@ -274,7 +292,7 @@
   (add-to-list 'org-structure-template-alist
                '("cc" "#+BEGIN_SRC c\n?\n#+END_SRC"))
 #+END_SRC
-
+  
 * Company-autocomplete
 #+BEGIN_SRC emacs-lisp
   (use-package company
