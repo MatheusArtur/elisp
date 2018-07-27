@@ -248,13 +248,13 @@
 #+END_SRC
 ** Hiding some minor modes
 #+BEGIN_SRC emacs-lisp
-    (use-package diminish
-      :ensure t
-      :init
-      (diminish 'hungry-delete-mode)
-      (diminish 'beacon-mode)
-      (diminish 'subword-mode)
-      (diminish 'which-key-mode))
+  (use-package diminish
+    :ensure t
+    :init
+    (diminish 'hungry-delete-mode)
+    (diminish 'beacon-mode)
+    (diminish 'subword-mode)
+    (diminish 'which-key-mode))
 #+END_SRC
 ** Battery
 #+BEGIN_SRC emacs-lisp
@@ -269,6 +269,7 @@
 #+END_SRC
 ** Time and date
 #+BEGIN_SRC emacs-lisp
+(setq display-time-default-load-average nil)
 (display-time-mode 1)
 (setq display-time-24hr-format t)
 (setq display-time-format "%H:%M - %d %B %Y")
@@ -295,15 +296,23 @@
                '("cc" "#+BEGIN_SRC c\n?\n#+END_SRC"))
 #+END_SRC
   
-* Company-autocomplete
+* Programming packages
+** Snippets
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :config
+    (use-package yasnippet-snippets
+      :ensure t)
+    (yas-reload-all))
+#+END_SRC
+** Company, main completion package
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :ensure t
     :config
     (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 1))
-
-  (add-hook 'after-init-hook 'global-company-mode)
+    (setq company-minimum-prefix-length 3))
 
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
@@ -311,4 +320,77 @@
     (define-key company-active-map (kbd "C-n") #'company-select-next)
     (define-key company-active-map (kbd "C-p") #'company-select-previous)
     (define-key company-active-map (kbd "SPC") #'company-abort))
+#+END_SRC
+
+** A spellchecker that works with programming languages
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+     :ensure t)
+#+END_SRC
+
+** C/C++ Packages & Configs
+*** Company
+#+BEGIN_SRC emacs-lisp
+  (use-package company-c-headers
+    :ensure t)
+
+  (use-package company-irony
+    :ensure t
+    :config
+    (require 'company)
+    (setq company-backends '((company-c-headers
+                              company-dabbrev-code
+                              company-irony))))
+
+  (use-package irony
+    :ensure t
+    :config
+    (add-hook 'c++-mode-hook 'irony-mode)
+    (add-hook 'c-mode-hook 'irony-mode)
+    (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+  (with-eval-after-load 'company
+    (add-hook 'c++-mode-hook 'company-mode)
+    (add-hook 'c-mode-hook 'company-mode))
+#+END_SRC
+
+*** Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-clang-analyzer
+    :ensure t
+    :config
+    (with-eval-after-load 'flycheck
+      (require 'flycheck-clang-analyzer)
+      (flycheck-clang-analyzer-setup)))
+#+END_SRC
+
+*** Yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c++-mode-hook 'yas-minor-mode)
+  (add-hook 'c-mode-hook 'yas-minor-mode)
+#+END_SRC
+** Elisp Packages & Configs
+*** Company
+#+BEGIN_SRC emacs-lisp
+   (add-hook 'emacs-lisp-mode-hook 'company-mode)
+
+  (use-package slime
+      :ensure t
+      :config
+      (setq inferior-lisp-program "/usr/bin/sbcl")
+      (setq slime-contribs '(slime-fancy)))
+
+    (use-package slime-company
+      :ensure t
+      :init
+        (require 'company)
+        (slime-setup '(slime-company)))
+#+END_SRC
+*** Yasnippet
+#+BEGIN_SRC emacs-lisp
+ (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** Eldoc mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 #+END_SRC
