@@ -160,13 +160,13 @@
 #+END_SRC
 ** DashBoard
  #+BEGIN_SRC emacs-lisp
-   (use-package dashboard
-     :ensure t
-     :config
-     (dashboard-setup-startup-hook)
-     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
-     (setq dashboard-items '((recents . 10)))
-     (setq dashboard-banner-logo-title "Gentoo part two eletric bogaloo"))
+      (use-package dashboard
+        :ensure t
+        :config
+        (dashboard-setup-startup-hook)
+        (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
+        (setq dashboard-items '((recents  . 5)))
+        (setq dashboard-banner-logo-title "Workflow ideal"))
  #+END_SRC
 ** Dmenu
 #+BEGIN_SRC emacs-lisp
@@ -328,6 +328,29 @@
 (global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
 (global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
 (global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
+#+END_SRC
+** Screenshots with imagemagick
+#+BEGIN_SRC emacs-lisp
+  (defun screenshot ()
+     "Takes a fullscreen screenshot of the current workspace"
+     (interactive)
+     (when window-system
+     (message "Cheese!")
+     (start-process "screenshot" nil "import" "-window" "root" 
+                (concat (getenv "HOME") "/" (subseq (number-to-string (float-time)) 0 10) ".png"))
+     (message "Screenshot taken!")))
+   (global-set-key (kbd "<print>") 'screenshot)
+
+  (defun screenshot-window ()
+     "Takes a screenshot of a region selected by the user."
+     (interactive)
+     (when window-system
+     (call-process "import" nil nil nil ".newScreen.png")
+     (call-process "convert" nil nil nil ".newScreen.png" "-shave" "1x1"
+                   (concat (getenv "HOME") "/" (subseq (number-to-string (float-time)) 0 10) ".png"))
+     (call-process "rm" nil nil nil ".newScreen.png"))
+     (message "Screenshot taken!"))
+   (global-set-key (kbd "<Scroll_Lock>") 'screenshot-window)
 #+END_SRC
 * Modeline
 ** Modeline(spaceline)
