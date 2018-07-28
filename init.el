@@ -36,7 +36,7 @@
  '(fci-rule-color "#222222")
  '(package-selected-packages
    (quote
-    (slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company eziam-theme sudo-edit hungry-delete goose-theme switch-window linum-relative sunrise-x-modeline sunrise-x-buttons sunrise-commander dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package)))
+    (mentor pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company eziam-theme sudo-edit hungry-delete goose-theme switch-window linum-relative sunrise-x-modeline sunrise-x-buttons sunrise-commander dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package)))
  '(pdf-view-midnight-colors (quote ("#ffffff" . "#222222")))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")

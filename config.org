@@ -17,7 +17,7 @@
 #+END_SRC
 ** Disable auto-save and backup files
 #+BEGIN_SRC emacs-lisp
-(setq make-save-default nil)
+(setq auto-save-default nil)
 (setq make-backup-file nil)
 #+END_SRC
 ** Hightline cursor line
@@ -30,7 +30,11 @@
 #+END_SRC
 ** Enable "pretty simbols" like lambda
 #+BEGIN_SRC emacs-lisp
-(when window-system (global-prettify-symbols-mode t))
+  (when window-system
+        (use-package pretty-mode
+        :ensure t
+        :config
+        (global-pretty-mode t)))
 #+END_SRC
 ** Disables startup messages
 #+BEGIN_SRC emacs-lisp
@@ -233,10 +237,99 @@
   (use-package exwm
     :ensure t
     :config
-    (require 'exwm-config)
-    (exwm-config-default))
+      (require 'exwm-config)
+      (fringe-mode 1)
+      (server-start)
+      (exwm-config-ido)
+      (setq exwm-workspace-number 3)
+      (exwm-input-set-key (kbd "s-r") #'exwm-restart)
+      (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
+      (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
+      (dotimes (i 10)
+        (exwm-input-set-key (kbd (format "s-%d" i))
+                            `(lambda ()
+                               (interactive)
+                               (exwm-workspace-switch-create ,i))))
+
+      (push ?\C-q exwm-input-prefix-keys)
+      (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
+
+      (exwm-input-set-simulation-keys
+       '(
+         ;; movement
+         ([?\C-b] . left)
+         ([?\M-b] . C-left)
+         ([?\C-f] . right)
+         ([?\M-f] . C-right)
+         ([?\C-p] . up)
+         ([?\C-n] . down)
+         ([?\C-a] . home)
+         ([?\C-e] . end)
+         ([?\M-v] . prior)
+         ([?\C-v] . next)
+         ([?\C-d] . delete)
+         ([?\C-k] . (S-end delete))
+         ;; cut/paste
+         ([?\C-w] . ?\C-x)
+         ([?\M-w] . ?\C-c)
+         ([?\C-y] . ?\C-v)
+         ;; search
+         ([?\C-s] . ?\C-f)))
+
+      (dolist (k '(XF86AudioLowerVolume
+                 XF86AudioRaiseVolume
+                 XF86PowerOff
+                 XF86AudioMute
+                 XF86AudioPlay
+                 XF86AudioStop
+                 XF86AudioPrev
+                 XF86AudioNext
+                 XF86ScreenSaver
+                 XF68Back
+                 XF86Forward
+                 Scroll_Lock
+                 print))
+      (cl-pushnew k exwm-input-prefix-keys))
+      (exwm-enable))
 #+END_SRC
-* Powerline
+** Lauching programs
+#+BEGIN_SRC emacs-lisp
+  (defun exwm-async-run (name)
+    (interactive)
+    (start-process name nil name))
+
+  (defun launch-browser ()
+    (interactive)
+    (exwm-async-run "firefox"))
+
+  (defun launch-lock ()
+    (interactive)
+    (exwm-async-run "slock"))
+
+  (global-set-key (kbd "s-i") 'launch-browser)
+  (global-set-key (kbd "s-x") 'launch-lock)
+#+END_SRC
+** Audio control
+#+BEGIN_SRC emacs-lisp
+(defconst volVar "5")
+
+  (defun audio/mute ()
+    (interactive)
+    (start-process "audio-mute" nil "amixer" "sset" "Master" "toggle"))
+
+  (defun audio/raise-volume ()
+    (interactive)
+    (start-process "audio-mute" nil "amixer" "sset" "Master" (concat volVar "%+")))
+
+  (defun audio/lower-volume ()
+    (interactive)
+    (start-process "audio-mute" nil "amixer" "sset" "Master" (concat volVar "%-")))
+
+(global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
+(global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
+(global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
+#+END_SRC
+* Modeline
 ** Modeline(spaceline)
 #+BEGIN_SRC emacs-lisp
     (use-package spaceline
@@ -252,20 +345,23 @@
     :ensure t
     :init
     (diminish 'hungry-delete-mode)
+    (diminish 'irony-mode)
+    (diminish 'linum-relative-mode)
+    (diminish 'eldoc-mode)
     (diminish 'beacon-mode)
     (diminish 'subword-mode)
     (diminish 'which-key-mode))
 #+END_SRC
 ** Battery
 #+BEGIN_SRC emacs-lisp
-(use-package fancy-battery
-  :ensure t
-  :config
-    (setq fancy-battery-show-percentage t)
-    (setq battery-update-interval 15)
-    (if window-system
-      (fancy-battery-mode)
-      (display-battery-mode)))
+  (use-package fancy-battery
+    :ensure t
+    :config
+      (setq fancy-battery-show-percentage t)
+      (setq battery-update-interval 10)
+      (if window-system
+        (fancy-battery-mode)
+        (display-battery-mode)))
 #+END_SRC
 ** Time and date
 #+BEGIN_SRC emacs-lisp
@@ -275,6 +371,10 @@
 (setq display-time-format "%H:%M - %d %B %Y")
 #+END_SRC
 * Org
+**  C-c ' replace current buffer
+#+BEGIN_SRC emacs-lisp
+(setq org-src-window-setup 'current-window)
+#+END_SRC
 ** Org bullets
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
