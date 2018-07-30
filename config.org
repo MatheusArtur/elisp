@@ -158,15 +158,36 @@
     :bind
     ("M-s" . avy-goto-char))
 #+END_SRC
+** Project manager
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :init
+      (projectile-mode 1))
+
+  (global-set-key (kbd "<f5>") 'projectile-compile-project)
+
+#+END_SRC
+** Git integration
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :config
+    (setq magit-push-always-verify nil)
+    (setq git-commit-summary-max-length 50)
+    :bind
+    ("M-g" . magit-status))
+#+END_SRC
 ** DashBoard
  #+BEGIN_SRC emacs-lisp
-      (use-package dashboard
-        :ensure t
-        :config
-        (dashboard-setup-startup-hook)
-        (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
-        (setq dashboard-items '((recents  . 5)))
-        (setq dashboard-banner-logo-title "Workflow ideal"))
+   (use-package dashboard
+     :ensure t
+     :config
+     (dashboard-setup-startup-hook)
+     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
+     (setq dashboard-items '((recents  . 5)
+                             (projects . 5)))
+     (setq dashboard-banner-logo-title "Workflow ideal"))
  #+END_SRC
 ** Dmenu
 #+BEGIN_SRC emacs-lisp
@@ -369,7 +390,9 @@
     :init
     (diminish 'hungry-delete-mode)
     (diminish 'irony-mode)
+    (diminish 'abbrev-mode)
     (diminish 'linum-relative-mode)
+    (diminish 'projectile-mode)
     (diminish 'eldoc-mode)
     (diminish 'beacon-mode)
     (diminish 'subword-mode)
@@ -516,4 +539,54 @@
 *** Eldoc mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+#+END_SRC
+* Media
+** EMMS
+#+BEGIN_SRC emacs-lisp
+ (use-package emms
+    :ensure t
+    :config
+      (require 'emms-setup)
+      (require 'emms-player-mpd)
+      (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
+      (setq emms-seek-seconds 5)
+      (setq emms-player-list '(emms-player-mpd))
+      (setq emms-info-functions '(emms-info-mpd))
+      (setq emms-player-mpd-server-name "localhost")
+      (setq emms-player-mpd-server-port "6601")
+    :bind
+      ("s-m p" . emms)
+      ("s-m b" . emms-smart-browse)
+      ("s-m r" . emms-player-mpd-update-all-reset-cache)
+      ("s-," . emms-previous)
+      ("s-." . emms-next)
+      ("s-p" . emms-pause)
+      ("s-o" . emms-stop))
+
+(setq mpc-host "localhost:6601")
+
+(defun mpd/start-music-daemon ()
+    "Start MPD, connects to it and syncs the metadata cache."
+    (interactive)
+    (shell-command "mpd")
+    (mpd/update-database)
+    (emms-player-mpd-connect)
+    (emms-cache-set-from-mpd-all)
+    (message "MPD Started!"))
+  (global-set-key (kbd "s-m c") 'mpd/start-music-daemon)
+
+ (defun mpd/kill-music-daemon ()
+    "Stops playback and kill the music daemon."
+    (interactive)
+    (emms-stop)
+    (call-process "killall" nil nil nil "mpd")
+    (message "MPD Killed!"))
+  (global-set-key (kbd "s-m k") 'mpd/kill-music-daemon)
+
+ (defun mpd/update-database ()
+    "Updates the MPD database synchronously."
+    (interactive)
+    (call-process "mpc" nil nil nil "update")
+    (message "MPD Database Updated!"))
+  (global-set-key (kbd "s-m u") 'mpd/update-database)
 #+END_SRC
