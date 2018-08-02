@@ -1,34 +1,232 @@
 #+STARTUP: overview
-#+TITLE: GNU/Emacs configuration.
+#+TITLE: EmaccS 
+#+CREATOR: Matheus Costa (macc)
+[[./img/dashLogo.png]]
+* General recomendations and references
+  This Emacs configuration should work fine on any GNU/Linux distribution, just get the external package dependencies. I cannot guarantee full functionality on others systems without some particular tweaks, but about 70% should work out of the box.
+  For the sources I used to build this configuration file, I had two main ones. First 'daedreth' [[https://www.youtube.com/channel/UCDEtZ7AKmwS0_GNJog01D2g][YouTube channel]], really good for learning Elisp and the [[https://www.emacswiki.org/][Emacs wiki]] that contains pretty much everything about Emacs and it's packages.
 * Basic configs
+  Some built-in emacs configurable variables, most interface and editing style related.
+
 ** Toolbar, menu and Scrollbar
 #+BEGIN_SRC emacs-lisp
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1) 
+  (tool-bar-mode -1)
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1) 
 #+END_SRC
+
 ** Replace Yes/No alias to y/n
 #+BEGIN_SRC emacs-lisp
-(defalias 'yes-or-no-p 'y-or-n-p)
+  (defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
+
 ** Scrolls one line per time. instead of the retarded default
 #+BEGIN_SRC emacs-lisp
-(setq scroll-conservatively 100)
+  (setq scroll-conservatively 100)
 #+END_SRC
+
 ** Disable auto-save and backup files
 #+BEGIN_SRC emacs-lisp
-(setq auto-save-default nil)
-(setq make-backup-file nil)
+  (setq auto-save-default nil)
+  (setq make-backup-file nil)
 #+END_SRC
-** Hightline cursor line
+
+** Hightline current line
 #+BEGIN_SRC emacs-lisp
-(global-hl-line-mode t)
+  (global-hl-line-mode t)
 #+END_SRC
-** Removes annoying ring bell
+
+** Remove annoying ring bell sound
 #+BEGIN_SRC emacs-lisp
-(setq ring-bell-function 'ignore)
+  (setq ring-bell-function 'ignore)
 #+END_SRC
-** Enable "pretty simbols" like lambda
+
+** Disables startup messages
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+#+END_SRC
+
+** UTF-8
+#+BEGIN_SRC emacs-lisp
+  (setq locale-coding-system 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-selection-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+#+END_SRC
+
+** Subword-mode
+   When the subword-mode is enable, uppercase letters are marked as a single word, VarAtkOne would be identified as =Var=, =Atk=, and =One=. Really good for managing multiple variables.
+
+#+BEGIN_SRC emacs-lisp
+  (global-subword-mode 1)
+  #+END_SRC
+
+** Auto-pairing (), "", {}, [].
+#+BEGIN_SRC emacs-lisp
+  (setq electric-pair-pairs '(
+                             (?\( . ?\))
+                             (?\[ . ?\])
+                             (?\" . ?\")
+                             (?\{ . ?\})))
+  (electric-pair-mode t)
+#+END_SRC
+
+** Highlight syntax-pairs (), {}, [], etc..
+#+BEGIN_SRC emacs-lisp
+  (show-paren-mode 1)
+#+END_SRC
+
+** Lines and column numbers
+#+BEGIN_SRC emacs-lisp
+  (line-number-mode 1)
+  (column-number-mode 1)
+#+END_SRC
+
+** Functions 
+*** Edit config file function  
+#+BEGIN_SRC emacs-lisp
+  (defun config-visit()
+    (interactive)
+    (find-file "~/.emacs.d/config.org"))
+  (global-set-key (kbd "C-c e") 'config-visit)
+#+END_SRC
+
+*** Reload config file function
+#+BEGIN_SRC emacs-lisp
+  (defun config-reload ()
+    (interactive)
+    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
+  (global-set-key (kbd "C-c r") 'config-reload)
+#+END_SRC
+
+*** Kill whole-word function
+#+BEGIN_SRC emacs-lisp
+  (defun kill-word-function ()
+    (interactive)
+    (forward-char 1)
+    (backward-word)
+    (kill-word 1)
+    (delete-char 1))
+  (global-set-key (kbd "C-c w") 'kill-word-function)
+#+END_SRC
+
+* Terminal emulator
+  Some tweaks to use the Emacs ansi-term.
+
+** Set Bash as default shell
+#+BEGIN_SRC emacs-lisp
+  (defvar term "/bin/bash")
+  (defadvice ansi-term (before force-bash)
+    (interactive (list term)))
+  (ad-activate 'ansi-term)
+#+END_SRC
+
+** Map Super+Enter to terminal
+#+BEGIN_SRC emacs-lisp
+  (when window-system (global-set-key (kbd "<s-return>") 'ansi-term))
+#+END_SRC
+
+* Packages
+** Which-key
+   A package meant for learning emacs shortcuts, it gently lists all possible binds for completing all sorts of commands.
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :init
+    (which-key-mode))
+#+END_SRC
+
+** Beacon
+   Highlight the current line when changing buffers.
+#+BEGIN_SRC emacs-lisp
+  (use-package beacon
+    :ensure t
+    :init
+    (beacon-mode 1))
+#+END_SRC
+
+** Avy
+   Avy for perfect navigation in the file, saves me hundreds of keypresses and completly ditches a mouse usage.
+#+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t
+    :bind
+    ("M-s" . avy-goto-char))
+#+END_SRC
+
+** Project manager
+   Easy to use project manager.
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :init
+      (projectile-mode 1))
+
+  (global-set-key (kbd "<f5>") 'projectile-compile-project)
+#+END_SRC
+
+** Git integration
+   Comfy git managing with Meta-g.
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t
+    :config
+    (setq magit-push-always-verify nil)
+    (setq git-commit-summary-max-length 50)
+    :bind
+    ("M-g" . magit-status))
+#+END_SRC
+
+** DashBoard
+   The "home" buffer of emacs to be said. The project item requires =projectile= package, listed above.
+ #+BEGIN_SRC emacs-lisp
+   (use-package dashboard
+     :ensure t
+     :config
+     (dashboard-setup-startup-hook)
+     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
+     (setq dashboard-items '((recents  . 5)
+                             (projects . 5)))
+     (setq dashboard-banner-logo-title "Workflow ideal"))
+ #+END_SRC
+
+** Dmenu
+   Dmenu launchs applications within emacs.
+#+BEGIN_SRC emacs-lisp
+  (use-package dmenu
+    :ensure t
+    :bind
+      ("s-d" . 'dmenu))
+#+END_SRC
+
+** Linum
+   Linum lists the current and relative line number in the left corner in the code.
+#+BEGIN_SRC emacs-lisp
+  (use-package linum-relative
+    :ensure t
+    :config
+      (setq linum-relative-current-symbol "")
+      (add-hook 'prog-mode-hook 'linum-relative-mode))
+#+END_SRC
+
+** Hungry delete
+   Saves you from pressing (((((Backspace))))) for 2 hours straight, just to get rid of a huge blank space.
+#+BEGIN_SRC emacs-lisp
+  (use-package hungry-delete
+    :ensure t
+    :config (global-hungry-delete-mode))
+#+END_SRC
+
+** Sudo edit
+   Edit root@ files.
+#+BEGIN_SRC emacs-lisp
+  (use-package sudo-edit
+    :ensure t
+    :bind ("s-e" . sudo-edit))
+#+END_SRC
+
+** Nice "pretty simbols" for lambda, nil, comparison operands, etc..
 #+BEGIN_SRC emacs-lisp
   (when window-system
         (use-package pretty-mode
@@ -36,34 +234,10 @@
         :config
         (global-pretty-mode t)))
 #+END_SRC
-** Disables startup messages
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-message t)
-#+END_SRC
-** Edit config file function  
-#+BEGIN_SRC emacs-lisp
-  (defun config-visit()
-    (interactive)
-    (find-file "~/.emacs.d/config.org"))
-  (global-set-key (kbd "C-c e") 'config-visit)
-#+END_SRC
-** Reload config file function
-#+BEGIN_SRC emacs-lisp
-  (defun config-reload ()
-    (interactive)
-    (org-babel-load-file (expand-file-name "~/.emacs.d/config.org")))
-  (global-set-key (kbd "C-c r") 'config-reload)
-#+END_SRC
-** UTF-8
-#+BEGIN_SRC emacs-lisp
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
-#+END_SRC
-** Manage windows like a pro
-*** Use switch-window plugin, it only works with windows > 2 mapping them with a, s, d, f, j, k, l
+
+** Manage Emacs windows in a comfortable way
+*** Use switch-window plugin
+    It only works with more than two active windows, mapping them with "a, s, d, f, j, k, l" for a precise switch.
 #+BEGIN_SRC emacs-lisp
   (use-package switch-window
     :ensure t
@@ -78,7 +252,8 @@
     ([remap other-window] . switch-window))
 
 #+END_SRC
-*** The cursor follow-up a new windows
+
+*** Functions for a cursor follow-up on new created windows
 #+BEGIN_SRC emacs-lisp
    (defun vertical-win ()
     (interactive)
@@ -94,129 +269,18 @@
     (other-window 1))
   (global-set-key (kbd "C-x 2") 'horizontal-win)
 #+END_SRC
-** Subword (Nice for VarOld) M-b would go for the Uppercase letter
-#+BEGIN_SRC emacs-lisp
-(global-subword-mode 1)
-  #+END_SRC
-** Matching (), "", {}, [].
-#+BEGIN_SRC emacs-lisp
-  (setq electric-pair-pairs '(
-                             (?\( . ?\))
-                             (?\[ . ?\])
-                             (?\" . ?\")
-                             (?\{ . ?\})))
-  (electric-pair-mode t)
-#+END_SRC
-** Kill whole-word
-#+BEGIN_SRC emacs-lisp
-  (defun kill-word-function ()
-    (interactive)
-    (backward-word)
-    (kill-word 1))
-  (global-set-key (kbd "C-c w") 'kill-word-function)
-#+END_SRC
-** Lines and column numbers
-#+BEGIN_SRC emacs-lisp
-  (line-number-mode 1)
-  (column-number-mode 1)
-#+END_SRC
-** Highlight syntax-pairs (), {}, [], etc..
-#+BEGIN_SRC emacs-lisp
-(show-paren-mode 1)
-#+END_SRC
-* Terminal
-** Set Bash as default shell
-#+BEGIN_SRC emacs-lisp
-(defvar term "/bin/bash")
-(defadvice ansi-term (before force-bash)
-  (interactive (list term)))
-(ad-activate 'ansi-term)
-#+END_SRC
-** Map Super+Enter to terminal
-#+BEGIN_SRC emacs-lisp
-(when window-system (global-set-key (kbd "<s-return>") 'ansi-term))
-#+END_SRC
-* Packages 
-** Which-key
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :ensure t
-  :init
-  (which-key-mode))
-#+END_SRC
-** Beacon
-#+BEGIN_SRC emacs-lisp
-(use-package beacon
-  :ensure t
-  :init
-  (beacon-mode 1))
-#+END_SRC
-** Avy
-#+BEGIN_SRC emacs-lisp
-  (use-package avy
-    :ensure t
-    :bind
-    ("M-s" . avy-goto-char))
-#+END_SRC
-** Project manager
-#+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :ensure t
-    :init
-      (projectile-mode 1))
 
-  (global-set-key (kbd "<f5>") 'projectile-compile-project)
+** Kill-Ring menu
+   Now you can navigate in your kill-ring list using "M-y", great.
+#+BEGIN_SRC emacs-lisp
+  (use-package popup-kill-ring
+    :ensure t
+    :bind ("M-y" . popup-kill-ring))
+#+END_SRC
 
-#+END_SRC
-** Git integration
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t
-    :config
-    (setq magit-push-always-verify nil)
-    (setq git-commit-summary-max-length 50)
-    :bind
-    ("M-g" . magit-status))
-#+END_SRC
-** DashBoard
- #+BEGIN_SRC emacs-lisp
-   (use-package dashboard
-     :ensure t
-     :config
-     (dashboard-setup-startup-hook)
-     (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
-     (setq dashboard-items '((recents  . 5)
-                             (projects . 5)))
-     (setq dashboard-banner-logo-title "Workflow ideal"))
- #+END_SRC
-** Dmenu
-#+BEGIN_SRC emacs-lisp
-(use-package dmenu
-  :ensure t
-  :bind
-    ("s-d" . 'dmenu))
-#+END_SRC
-** Lines in codes
-#+BEGIN_SRC emacs-lisp
-(use-package linum-relative
-  :ensure t
-  :config
-    (setq linum-relative-current-symbol "")
-    (add-hook 'prog-mode-hook 'linum-relative-mode))
-#+END_SRC
-** Hungry delete
-#+BEGIN_SRC emacs-lisp
-  (use-package hungry-delete
-    :ensure t
-    :config (global-hungry-delete-mode))
-#+END_SRC
-** Sudo edit
-#+BEGIN_SRC emacs-lisp
-  (use-package sudo-edit
-    :ensure t
-    :bind ("s-e" . sudo-edit))
-#+END_SRC
 * IDO mode, buffer and file navigation 
+  "C-x b" for default is really bad for navigating in buffers, specially if you are working with a dozen of them. IDO-mode + the ido-vertical-mode package lists all buffers and accept tab completion.
+
 ** Enable IDO mode
 #+BEGIN_SRC emacs-lisp
 (setq ido-enable-flex-matching nil)
@@ -224,6 +288,7 @@
 (setq ido-everywhere t)
 (ido-mode 1)
 #+END_SRC
+
 ** IDO vertical mode
 #+BEGIN_SRC emacs-lisp
   (use-package ido-vertical-mode
@@ -232,7 +297,8 @@
     (ido-vertical-mode 1))
   (setq ido-vertical-define-keys 'C-n-and-C-p-only)
 #+END_SRC 
-** SMEX, completion for M-x
+
+** SMEX, completion for "M-x"
 #+BEGIN_SRC emacs-lisp
   (use-package smex
     :ensure t
@@ -240,11 +306,13 @@
     :bind
     ("M-x" . smex))
 #+END_SRC
+
 ** Setup Ibuffer, a non-retard buffer navigator
 #+BEGIN_SRC emacs-lisp
   (global-set-key (kbd "C-x C-b") 'ibuffer)
   (setq ibuffer-expert t)
 #+END_SRC
+
 ** C-x k kills the current buffer
 #+BEGIN_SRC emacs-lisp
   (defun murder-buffer ()
@@ -252,7 +320,17 @@
     (kill-buffer (current-buffer)))
   (global-set-key (kbd "C-x k") 'murder-buffer)
 #+END_SRC
-* EXWM
+
+* EXWM (Emacs X window manager)
+  This transforms Emacs into a powerful tiling window manager. Delete this section for usage in desktop enviroments, other wm's or tty-only
+
+** Dependencies
+   - =xorg-x11=, for full X support.
+   - Any Audio controller. I personally use alsa/amixer. but you can use pulseaudio/pmixer or anything really.
+   - Some fonts, I personally use the =terminus-font=, =noto-cjk= and =ttf-fonts= packages so X can load pretty much anything.
+   - =compton= with some configuration, EXWM flickers a lot without a compositor.
+   - =slock=, a simple screen locker.
+
 ** Package
 #+BEGIN_SRC emacs-lisp
   (use-package exwm
@@ -262,7 +340,9 @@
       (fringe-mode 1)
       (server-start)
       (exwm-config-ido)
-      (setq exwm-workspace-number 3)
+
+      ; Setup the workpasces Mod + 1-9
+      (setq exwm-workspace-number 1)
       (exwm-input-set-key (kbd "s-r") #'exwm-restart)
       (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
       (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
@@ -275,6 +355,7 @@
       (push ?\C-q exwm-input-prefix-keys)
       (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
 
+      ; Keybinds
       (exwm-input-set-simulation-keys
        '(
          ;; movement
@@ -297,6 +378,7 @@
          ;; search
          ([?\C-s] . ?\C-f)))
 
+      ; Enables special keyboard keys.
       (dolist (k '(XF86AudioLowerVolume
                  XF86AudioRaiseVolume
                  XF86PowerOff
@@ -313,7 +395,9 @@
       (cl-pushnew k exwm-input-prefix-keys))
       (exwm-enable))
 #+END_SRC
+
 ** Lauching programs
+   Functions for lauching a browser and locking the screen. Requires a browser and =slock= package.
 #+BEGIN_SRC emacs-lisp
   (defun exwm-async-run (name)
     (interactive)
@@ -330,7 +414,9 @@
   (global-set-key (kbd "s-i") 'launch-browser)
   (global-set-key (kbd "s-x") 'launch-lock)
 #+END_SRC
+
 ** Audio control
+   Note that "amixer" is the alsa mixer that I use in my Gentoo system, if you use a different audio controller you need to change for the proper command.
 #+BEGIN_SRC emacs-lisp
 (defconst volVar "5")
 
@@ -350,6 +436,7 @@
 (global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
 (global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
 #+END_SRC
+
 ** Screenshots with imagemagick
 #+BEGIN_SRC emacs-lisp
   (defun screenshot ()
@@ -373,7 +460,10 @@
      (message "Screenshot taken!"))
    (global-set-key (kbd "<Scroll_Lock>") 'screenshot-window)
 #+END_SRC
-* Modeline
+
+* Modeline (aka. the bar)
+  Making the modeline great for information display.
+
 ** Modeline(spaceline)
 #+BEGIN_SRC emacs-lisp
     (use-package spaceline
@@ -383,7 +473,9 @@
       (setq powerline-default-separator (quote arrow))
       (spaceline-spacemacs-theme))
 #+END_SRC
-** Hiding some minor modes
+
+** Format
+*** Hiding minor modes
 #+BEGIN_SRC emacs-lisp
   (use-package diminish
     :ensure t
@@ -398,7 +490,8 @@
     (diminish 'subword-mode)
     (diminish 'which-key-mode))
 #+END_SRC
-** Battery
+
+*** Laptop battery display
 #+BEGIN_SRC emacs-lisp
   (use-package fancy-battery
     :ensure t
@@ -409,40 +502,59 @@
         (fancy-battery-mode)
         (display-battery-mode)))
 #+END_SRC
-** Time and date
+
+*** Time and date
 #+BEGIN_SRC emacs-lisp
 (setq display-time-default-load-average nil)
 (display-time-mode 1)
 (setq display-time-24hr-format t)
 (setq display-time-format "%H:%M - %d %B %Y")
 #+END_SRC
-* Org
+
+* Org Mode
 **  C-c ' replace current buffer
+    The defaults create a new windown.
 #+BEGIN_SRC emacs-lisp
 (setq org-src-window-setup 'current-window)
 #+END_SRC
+
 ** Org bullets
+   Organize the headers in a nice way.
 #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :ensure t
     :config
     (add-hook 'org-mode-hook (lambda  () (org-bullets-mode))))
 #+END_SRC
+
 ** Highlight SRC syntax
+   Show the syntax in the SRC cases.
 #+BEGIN_SRC emacs-lisp
 (setq org-src-fontify-natively t)
 #+END_SRC
+
 ** Macro programing languages SRC cases
+   Because typing the languague everytime is very repetitive.
+
+# For Emacs-Lisp
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-structure-template-alist
                '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
 #+END_SRC
+
+# For C
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'org-structure-template-alist
                '("cc" "#+BEGIN_SRC c\n?\n#+END_SRC"))
 #+END_SRC
   
 * Programming packages
+  Snippets & autocompletion packages first, then configuration by language.
+
+** Dependencies
+   - =clang= for C/C++ completion.
+   - =sbcl= (stell bank common lisp) interpreter for the various lisp dialects completion.
+
 ** Snippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
@@ -452,6 +564,7 @@
       :ensure t)
     (yas-reload-all))
 #+END_SRC
+
 ** Company, main completion package
 #+BEGIN_SRC emacs-lisp
   (use-package company
@@ -515,6 +628,7 @@
   (add-hook 'c++-mode-hook 'yas-minor-mode)
   (add-hook 'c-mode-hook 'yas-minor-mode)
 #+END_SRC
+
 ** Elisp Packages & Configs
 *** Company
 #+BEGIN_SRC emacs-lisp
@@ -532,16 +646,22 @@
         (require 'company)
         (slime-setup '(slime-company)))
 #+END_SRC
+
 *** Yasnippet
 #+BEGIN_SRC emacs-lisp
  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
 #+END_SRC
+
 *** Eldoc mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 #+END_SRC
-* Media
+
+* Media 
 ** EMMS
+   Why use a external media player for listening music when you can do it within Emacs with EMMS?
+
+   Requires =mpd= and =mpc= installed and some system setup. Check out 'daedreth' [[https://www.youtube.com/watch?v%3DxTVN8UDScqk&t%3D931s][Video]] for more info.
 #+BEGIN_SRC emacs-lisp
  (use-package emms
     :ensure t
@@ -564,7 +684,11 @@
       ("s-o" . emms-stop))
 
 (setq mpc-host "localhost:6601")
+#+END_SRC
 
+*** Binding functions
+**** Starting music daemon
+#+BEGIN_SRC emacs-lisp
 (defun mpd/start-music-daemon ()
     "Start MPD, connects to it and syncs the metadata cache."
     (interactive)
@@ -574,7 +698,10 @@
     (emms-cache-set-from-mpd-all)
     (message "MPD Started!"))
   (global-set-key (kbd "s-m c") 'mpd/start-music-daemon)
+#+END_SRC
 
+**** Killin' daemon
+#+BEGIN_SRC emacs-lisp
  (defun mpd/kill-music-daemon ()
     "Stops playback and kill the music daemon."
     (interactive)
@@ -582,7 +709,9 @@
     (call-process "killall" nil nil nil "mpd")
     (message "MPD Killed!"))
   (global-set-key (kbd "s-m k") 'mpd/kill-music-daemon)
-
+#+END_SRC
+**** Update playlists
+#+BEGIN_SRC emacs-lisp
  (defun mpd/update-database ()
     "Updates the MPD database synchronously."
     (interactive)
