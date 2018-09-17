@@ -32,7 +32,7 @@
  '(fci-rule-color "#222222")
  '(package-selected-packages
    (quote
-    (magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme avk-emacs-themes which-key use-package)))
+    (mark-multiple magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme which-key use-package)))
  '(pdf-view-midnight-colors (quote ("#ffffff" . "#222222")))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")
@@ -42,4 +42,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 90 :width normal :foundry "xos4" :family "xos4 Terminus")))))
+ '(default ((t (:inherit nil :stipple nil :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 97 :width normal :foundry "xos4" :family "xos4 Terminus")))))

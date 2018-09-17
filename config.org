@@ -278,6 +278,16 @@
     :bind ("M-y" . popup-kill-ring))
 #+END_SRC
 
+** Multiple mark
+
+   After selecting the wanted sting, press =C-c q= to mark the next one.
+#+BEGIN_SRC emacs-lisp
+  (use-package mark-multiple
+    :ensure t
+    :bind
+    ("C-c q" . 'mark-next-like-this))
+#+END_SRC
+
 * IDO mode, buffer and file navigation 
   "C-x b" for default is really bad for navigating in buffers, specially if you are working with a dozen of them. IDO-mode + the ido-vertical-mode package lists all buffers and accept tab completion.
 
@@ -342,7 +352,7 @@
       (exwm-config-ido)
 
       ; Setup the workpasces Mod + 1-9
-      (setq exwm-workspace-number 1)
+      (setq exwm-workspace-number 3)
       (exwm-input-set-key (kbd "s-r") #'exwm-restart)
       (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
       (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
