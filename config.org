@@ -218,21 +218,20 @@
     :config (global-hungry-delete-mode))
 #+END_SRC
 
-** Sudo edit
-   Edit root@ files.
+** Pretty simbols for booleans, lambda, etc...
+#+BEGIN_SRC emacs-lisp
+  (when window-system
+	(use-package pretty-mode
+	:ensure t
+	:config
+	(global-pretty-mode t)))
+#+END_SRC
+
+** Edit root@ files.
 #+BEGIN_SRC emacs-lisp
   (use-package sudo-edit
     :ensure t
     :bind ("s-e" . sudo-edit))
-#+END_SRC
-
-** Nice "pretty simbols" for lambda, nil, comparison operands, etc..
-#+BEGIN_SRC emacs-lisp
-  (when window-system
-        (use-package pretty-mode
-        :ensure t
-        :config
-        (global-pretty-mode t)))
 #+END_SRC
 
 ** Manage Emacs windows in a comfortable way
@@ -337,73 +336,86 @@
 ** Dependencies
    - =xorg-x11=, for full X support.
    - Any Audio controller. I personally use alsa/amixer. but you can use pulseaudio/pmixer or anything really.
-   - Some fonts, I personally use the =terminus-font=, =noto-cjk= and =ttf-fonts= packages so X can load pretty much anything.
+   - Some fonts, I personally use the =terminus-font=, =noto= and =ttf-fonts= packages so X can load pretty much anything.
    - =compton= with some configuration, EXWM flickers a lot without a compositor.
    - =slock=, a simple screen locker.
 
 ** Package
 #+BEGIN_SRC emacs-lisp
-  (use-package exwm
-    :ensure t
-    :config
-      (require 'exwm-config)
-      (fringe-mode 1)
-      (server-start)
-      (exwm-config-ido)
+    (use-package exwm
+      :ensure t
+      :config
+	(require 'exwm-config)
+	(fringe-mode 1)
+	(server-start)
+	(exwm-config-ido)
 
-      ; Setup the workpasces Mod + 1-9
-      (setq exwm-workspace-number 3)
-      (exwm-input-set-key (kbd "s-r") #'exwm-restart)
-      (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
-      (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
-      (dotimes (i 10)
-        (exwm-input-set-key (kbd (format "s-%d" i))
-                            `(lambda ()
-                               (interactive)
-                               (exwm-workspace-switch-create ,i))))
+	; Setup the workpasces Mod + 1-9
+	(setq exwm-workspace-number 3)
+	(exwm-input-set-key (kbd "s-r") #'exwm-restart)
+	(exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
+	(exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
+	(dotimes (i 10)
+	  (exwm-input-set-key (kbd (format "s-%d" i))
+			      `(lambda ()
+				 (interactive)
+				 (exwm-workspace-switch-create ,i))))
 
-      (push ?\C-q exwm-input-prefix-keys)
-      (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
+	(push ?\C-q exwm-input-prefix-keys)
+	(define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
 
-      ; Keybinds
-      (exwm-input-set-simulation-keys
-       '(
-         ;; movement
-         ([?\C-b] . left)
-         ([?\M-b] . C-left)
-         ([?\C-f] . right)
-         ([?\M-f] . C-right)
-         ([?\C-p] . up)
-         ([?\C-n] . down)
-         ([?\C-a] . home)
-         ([?\C-e] . end)
-         ([?\M-v] . prior)
-         ([?\C-v] . next)
-         ([?\C-d] . delete)
-         ([?\C-k] . (S-end delete))
-         ;; cut/paste
-         ([?\C-w] . ?\C-x)
-         ([?\M-w] . ?\C-c)
-         ([?\C-y] . ?\C-v)
-         ;; search
-         ([?\C-s] . ?\C-f)))
 
-      ; Enables special keyboard keys.
-      (dolist (k '(XF86AudioLowerVolume
-                 XF86AudioRaiseVolume
-                 XF86PowerOff
-                 XF86AudioMute
-                 XF86AudioPlay
-                 XF86AudioStop
-                 XF86AudioPrev
-                 XF86AudioNext
-                 XF86ScreenSaver
-                 XF68Back
-                 XF86Forward
-                 Scroll_Lock
-                 print))
-      (cl-pushnew k exwm-input-prefix-keys))
-      (exwm-enable))
+	(require 'exwm-randr)
+	(setq exwm-randr-workspace-output-plist '(0 "HDMI1")) ;; DP-1 being the name of my new monitor as shown by `randr'
+	(add-hook 'exwm-randr-screen-change-hook
+		  (lambda ()
+		    (start-process-shell-command
+		     "xrandr" nil "xrandr --output HDMI1 --left-of LVDS1 --auto"))) ;; eDP-1 being the name of my original (laptop) monitor
+	(exwm-enable)
+	(exwm-randr-enable)
+
+;	(exwm-enable-ido-workaround)
+
+	; Keybinds
+	(exwm-input-set-simulation-keys
+	 '(
+	   ;; movement
+	   ([?\C-b] . left)
+	   ([?\M-b] . C-left)
+	   ([?\C-f] . right)
+	   ([?\M-f] . C-right)
+	   ([?\C-p] . up)
+	   ([?\C-n] . down)
+	   ([?\C-a] . home)
+	   ([?\C-e] . end)
+	   ([?\M-v] . prior)
+	   ([?\C-v] . next)
+	   ([?\C-d] . delete)
+	   ([?\C-k] . (S-end delete))
+	   ;; cut/paste
+	   ([?\C-w] . ?\C-x)
+	   ([?\M-w] . ?\C-c)
+	   ([?\C-y] . ?\C-v)
+	   ;; search
+	   ([?\C-s] . ?\C-f)))
+
+	; Enables special keyboard keys.
+	(dolist (k '(XF86AudioLowerVolume
+		   XF86AudioRaiseVolume
+		   XF86PowerOff
+		   XF86AudioMute
+		   XF86AudioPlay
+		   XF86AudioStop
+		   XF86AudioPrev
+		   XF86AudioNext
+		   XF86ScreenSaver
+		   XF86Launch1
+		   XF68Back
+		   XF86Forward
+		   Scroll_Lock
+		   print))
+	(cl-pushnew k exwm-input-prefix-keys))
+	(exwm-enable))
 #+END_SRC
 
 ** Lauching programs
@@ -428,7 +440,7 @@
 ** Audio control
    Note that "amixer" is the alsa mixer that I use in my Gentoo system, if you use a different audio controller you need to change for the proper command.
 #+BEGIN_SRC emacs-lisp
-(defconst volVar "5")
+(defconst volVar "2p")
 
   (defun audio/mute ()
     (interactive)
