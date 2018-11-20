@@ -452,7 +452,7 @@
 ** Audio control
    Note that "amixer" is the alsa mixer that I use in my Gentoo system, if you use a different audio controller you need to change for the proper command.
 #+BEGIN_SRC emacs-lisp
-(defconst volVar "2p")
+(defconst volVar "2")
 
   (defun audio/mute ()
     (interactive)
