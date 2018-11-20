@@ -1,7 +1,19 @@
-#+STARTUP: overview
-#+TITLE: EmaccS 
-#+CREATOR: Matheus Costa (macc)
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: EmaccS
+#+DATE: <2018-11-20 Tue>
+#+AUTHOR: Matehus Artur
+#+EMAIL: macc@cock.li
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 26.1 (Org mode 9.1.9)
+
 [[./img/dashLogo.png]]
+
 * General recomendations and references
   This Emacs configuration should work fine on any GNU/Linux distribution, just get the external package dependencies. I cannot guarantee full functionality on others systems without some particular tweaks, but about 70% should work out of the box.
   For the sources I used to build this configuration file, I had two main ones. First 'daedreth' [[https://www.youtube.com/channel/UCDEtZ7AKmwS0_GNJog01D2g][YouTube channel]], really good for learning Elisp and the [[https://www.emacswiki.org/][Emacs wiki]] that contains pretty much everything about Emacs and it's packages.
@@ -366,11 +378,11 @@
 
 
 	(require 'exwm-randr)
-	(setq exwm-randr-workspace-output-plist '(0 "HDMI1")) ;; DP-1 being the name of my new monitor as shown by `randr'
+	(setq exwm-randr-workspace-output-plist '(0 "HDMI-1"))
 	(add-hook 'exwm-randr-screen-change-hook
 		  (lambda ()
 		    (start-process-shell-command
-		     "xrandr" nil "xrandr --output HDMI1 --left-of LVDS1 --auto"))) ;; eDP-1 being the name of my original (laptop) monitor
+		     "xrandr" nil "xrandr --output HDMI-1 --left-of LVDS-1 --auto")))
 	(exwm-enable)
 	(exwm-randr-enable)
 
