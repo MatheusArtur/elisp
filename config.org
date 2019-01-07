@@ -96,6 +96,13 @@
 #+END_SRC
 
 ** Functions 
+*** Edit Personal Schedule
+#+BEGIN_SRC emacs-lisp
+  (defun acess-routine()
+    (interactive)
+    (find-file "~/uni/schedule.org"))
+  (global-set-key (kbd "C-c s") 'acess-routine)
+#+END_SRC
 *** Edit config file function  
 #+BEGIN_SRC emacs-lisp
   (defun config-visit()
@@ -123,6 +130,20 @@
   (global-set-key (kbd "C-c w") 'kill-word-function)
 #+END_SRC
 
+** IRC configs
+#+BEGIN_SRC emacs-lisp
+(setq erc-nick "macc")
+(setq erc-prompt (lambda () (concat "[" (buffer-name) "]")))
+(setq erc-hide-list '("JOIN" "PART" "QUIT"))
+
+(setq erc-server-history-list '("irc.freenode.net"
+                                "localhost"))
+
+(use-package erc-hl-nicks
+  :ensure t
+  :config
+    (erc-update-modules))
+#+END_SRC
 * Terminal emulator
   Some tweaks to use the Emacs ansi-term.
 
@@ -209,7 +230,7 @@
   (use-package dmenu
     :ensure t
     :bind
-      ("s-d" . 'dmenu))
+      ("s-SPC" . 'dmenu))
 #+END_SRC
 
 ** Linum
@@ -297,6 +318,12 @@
     :ensure t
     :bind
     ("C-c q" . 'mark-next-like-this))
+#+END_SRC
+
+** Autism
+#+BEGIN_SRC emacs-lisp
+  (use-package elcord
+    :ensure t)
 #+END_SRC
 
 * IDO mode, buffer and file navigation 
@@ -439,12 +466,17 @@
 
   (defun launch-browser ()
     (interactive)
-    (exwm-async-run "firefox"))
+    (exwm-async-run "chromium"))
 
   (defun launch-lock ()
     (interactive)
     (exwm-async-run "slock"))
 
+  (defun launch-discord ()
+    (interactive)
+    (exwm-async-run "discord"))
+
+  (global-set-key (kbd "s-d") 'launch-discord)
   (global-set-key (kbd "s-i") 'launch-browser)
   (global-set-key (kbd "s-x") 'launch-lock)
 #+END_SRC
@@ -452,23 +484,28 @@
 ** Audio control
    Note that "amixer" is the alsa mixer that I use in my Gentoo system, if you use a different audio controller you need to change for the proper command.
 #+BEGIN_SRC emacs-lisp
-(defconst volVar "2")
+  (defconst volVar "2")
 
   (defun audio/mute ()
     (interactive)
-    (start-process "audio-mute" nil "amixer" "sset" "Master" "toggle"))
+    (start-process "audio-mute" nil "amixer" "set" "Master" "toggle"))
 
   (defun audio/raise-volume ()
     (interactive)
-    (start-process "audio-mute" nil "amixer" "sset" "Master" (concat volVar "%+")))
+    (start-process "raise-volume" nil "amixer" "set" "Master" (concat volVar "%+")))
 
   (defun audio/lower-volume ()
     (interactive)
-    (start-process "audio-mute" nil "amixer" "sset" "Master" (concat volVar "%-")))
+    (start-process "lower-volume" nil "amixer" "set" "Master" (concat volVar "%-")))
 
-(global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
-(global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
-(global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
+  (defun capture/mute ()
+    (interactive)
+    (start-process "capture-mute" nil "amixer" "sset" "Capture" "toggle"))
+
+  (global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
+  (global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
+  (global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
+  (global-set-key (kbd "<XF86AudioMicMute>") 'capture/mute)
 #+END_SRC
 
 ** Screenshots with imagemagick
@@ -605,7 +642,7 @@
     :ensure t
     :config
     (setq company-idle-delay 0)
-    (setq company-minimum-prefix-length 3))
+    (setq company-minimum-prefix-length 2))
 
   (with-eval-after-load 'company
     (define-key company-active-map (kbd "M-n") nil)
@@ -678,7 +715,7 @@
       :ensure t
       :init
         (require 'company)
-        (slime-setup '(slime-company)))
+        (slime-setup '(slime-fancy slime-company)))
 #+END_SRC
 
 *** Yasnippet
