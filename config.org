@@ -100,7 +100,7 @@
 #+BEGIN_SRC emacs-lisp
   (defun acess-routine()
     (interactive)
-    (find-file "~/uni/schedule.org"))
+    (find-file "~/Documents/schedule.org"))
   (global-set-key (kbd "C-c s") 'acess-routine)
 #+END_SRC
 *** Edit config file function  
@@ -322,10 +322,9 @@
 
 ** Autism
 #+BEGIN_SRC emacs-lisp
-  (use-package elcord
-    :ensure t)
+      (use-package elcord
+	:ensure t)
 #+END_SRC
-
 * IDO mode, buffer and file navigation 
   "C-x b" for default is really bad for navigating in buffers, specially if you are working with a dozen of them. IDO-mode + the ido-vertical-mode package lists all buffers and accept tab completion.
 
@@ -479,33 +478,6 @@
   (global-set-key (kbd "s-d") 'launch-discord)
   (global-set-key (kbd "s-i") 'launch-browser)
   (global-set-key (kbd "s-x") 'launch-lock)
-#+END_SRC
-
-** Audio control
-   Note that "amixer" is the alsa mixer that I use in my Gentoo system, if you use a different audio controller you need to change for the proper command.
-#+BEGIN_SRC emacs-lisp
-  (defconst volVar "2")
-
-  (defun audio/mute ()
-    (interactive)
-    (start-process "audio-mute" nil "amixer" "set" "Master" "toggle"))
-
-  (defun audio/raise-volume ()
-    (interactive)
-    (start-process "raise-volume" nil "amixer" "set" "Master" (concat volVar "%+")))
-
-  (defun audio/lower-volume ()
-    (interactive)
-    (start-process "lower-volume" nil "amixer" "set" "Master" (concat volVar "%-")))
-
-  (defun capture/mute ()
-    (interactive)
-    (start-process "capture-mute" nil "amixer" "sset" "Capture" "toggle"))
-
-  (global-set-key (kbd "<XF86AudioMute>") 'audio/mute)
-  (global-set-key (kbd "<XF86AudioRaiseVolume>") 'audio/raise-volume)
-  (global-set-key (kbd "<XF86AudioLowerVolume>") 'audio/lower-volume)
-  (global-set-key (kbd "<XF86AudioMicMute>") 'capture/mute)
 #+END_SRC
 
 ** Screenshots with imagemagick
@@ -728,6 +700,11 @@
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
 #+END_SRC
 
+** Cheat.sh
+#+BEGIN_SRC emacs-lisp
+  (use-package cheat-sh
+    :ensure t)
+#+END_SRC
 * Media 
 ** EMMS
    Why use a external media player for listening music when you can do it within Emacs with EMMS?

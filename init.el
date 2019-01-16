@@ -33,7 +33,7 @@
  '(jdee-server-dir "~/.emacs.d/jdee-server")
  '(package-selected-packages
    (quote
-    (erc-hl-nicks elcord popup-kill-ring avy mark-multiple magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme which-key use-package)))
+    (ivy cheat-sh erc-hl-nicks elcord popup-kill-ring avy mark-multiple magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme which-key use-package)))
  '(pdf-view-midnight-colors (quote ("#ffffff" . "#222222")))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")
