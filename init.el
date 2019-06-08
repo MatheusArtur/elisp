@@ -36,7 +36,7 @@
     ("~/sync/schedules/classes.org" "~/sync/schedules/projects.org" "~/sync/schedules/routine.org" "~/sync/schedules/tests.org")))
  '(package-selected-packages
    (quote
-    (ivy cheat-sh erc-hl-nicks elcord popup-kill-ring avy mark-multiple magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme which-key use-package)))
+    (run-assoc openwith jdee google-c-style autodisass-java-bytecode realgud ivy cheat-sh erc-hl-nicks elcord popup-kill-ring avy mark-multiple magit emms projectile pretty-mode slime-company slime yasnippet-snippets yasnippet flycheck-clang-analyzer flycheck irony company-irony company-c-headers diminish spaceline company sudo-edit hungry-delete switch-window linum-relative dmenu fancy-battery exwm dashboard smex ido-vertical-mode org-bullets beacon spacemacs-theme which-key use-package)))
  '(pdf-view-midnight-colors (quote ("#ffffff" . "#222222")))
  '(pos-tip-background-color "#36473A")
  '(pos-tip-foreground-color "#FFFFC8")

@@ -7,9 +7,46 @@
 #+EXCLUDE_TAGS: noexport
 #+OPTIONS: noexport
 #+CREATOR: Emacs 26.1 (Org mode 9.1.9)
-
+#+LATEX_CLASS: article
+#+DESCRIPTION:
+#+KEYWORDS:
+#+SUBTITLE:
+#+LATEX_COMPILER: pdflatex
+#+DATE: \today
 #+ATTR_HTML: :style margin-left: auto; margin-right: auto;
 [[img/dashLogo.png]]
+* Hydra
+  Testing stuff
+#+BEGIN_SRC emacs-lisp
+
+  (use-package hydra
+    :ensure t
+    :defer 2
+    :bind ("C-c c" . hydra-clock/body))
+
+  (defhydra hydra-clock (:color blue)
+      "
+      ^
+      ^Clock^             ^Do^
+      ^─────^─────────────^──^─────────
+      _q_ quit            _c_ cancel
+      ^^                  _d_ display
+      ^^                  _e_ effort
+      ^^                  _i_ in
+      ^^                  _j_ jump
+      ^^                  _o_ out
+      ^^                  _r_ report
+      ^^                  ^^
+      "
+      ("q" nil)
+      ("c" org-clock-cancel :color pink)
+      ("d" org-clock-display)
+      ("e" org-clock-modify-effort-estimate)
+      ("i" org-clock-in)
+      ("j" org-clock-goto)
+      ("o" org-clock-out)
+      ("r" org-clock-report))
+#+END_SRC
 
 * General recomendations and references
   This Emacs configuration should work fine on any GNU/Linux distribution, just get the external package dependencies. I cannot guarantee full functionality on others systems without some particular tweaks, but about 70% should work out of the box.
@@ -125,7 +162,7 @@
 (setq erc-prompt (lambda () (concat "[" (buffer-name) "]")))
 (setq erc-hide-list '("JOIN" "PART" "QUIT"))
 
-(setq erc-server-history-list '("irc.freenode.net"
+(setq erc-server-history-list '("irc.rizon.net"
                                 "localhost"))
 
 (use-package erc-hl-nicks
@@ -211,7 +248,7 @@
      (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
      (setq dashboard-items '((recents  . 5)
                              (projects . 5)))
-     (setq dashboard-banner-logo-title "闘志!!!"))
+     (setq dashboard-banner-logo-title "GNU/Emacs"))
  #+END_SRC
 
 ** Dmenu
@@ -389,11 +426,11 @@
 
 
     (require 'exwm-randr)
-    (setq exwm-randr-workspace-output-plist '(0 "HDMI-1"))
+    (setq exwm-randr-workspace-output-plist '(0 "HDMI-2"))
     (add-hook 'exwm-randr-screen-change-hook
 	      (lambda ()
 		(start-process-shell-command
-		 "xrandr" nil "xrandr --output HDMI-1 --left-of LVDS-1 --auto")))
+		 "xrandr" nil "xrandr --output HDMI-2 --left-of LVDS-1 --auto")))
     (exwm-enable)
     (exwm-randr-enable)
 
@@ -754,6 +791,24 @@
     :ensure t)
 #+END_SRC
 
+** Java
+#+BEGIN_SRC emacs-lisp
+  (use-package jdee
+    :ensure t
+    :bind
+    ("C-z" . hydra-jdee/body))
+
+    (defhydra hydra-jdee (:hint nil :exit t)
+    "
+    _c_: Compile project
+    _x_: Run project
+    "  
+      ("c" jdee-compile)
+      ("x" jdee-run)
+
+      ("q" exit)
+      ("z" nil "leave"))
+#+END_SRC
 * Media 
 ** EMMS
    Why use a external media player for listening music when you can do it within Emacs with EMMS?
@@ -834,10 +889,30 @@
 (shell-command "compton -b")
 #+END_SRC
 
-** bittorrent client
-   It will stack procs if you don't kill all. I know it sucksa bit, might change my 
+* Openwith
+  Use this to lauch external programs
 #+BEGIN_SRC emacs-lisp
-(shell-command "killall transmission-daemon")
-(shell-command "transmission-daemon")
+
+
+    (use-package openwith
+      :ensure t
+      :init
+      :config
+      (openwith-mode t)
+      (setq openwith-associations '((".pdf" "mupdf" (file))
+				    (".mp4" "mpv" (file))
+				    (".mkv" "mpv" (file))
+				    (".png" "feh" (file))
+				    (".jpeg" "feh" (file))
+				    (".jpg" "feh" (file))
+				    (".gif" "feh" (file)))))
+
+; annoying pop up when oppening a video
+
+#+END_SRC
+
+** remove large file warning
+#+BEGIN_SRC emacs-lisp
+(setq large-file-warning-threshold nil)
 #+END_SRC
 
