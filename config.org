@@ -7,37 +7,6 @@
 #+DESCRIPTION:
 #+ATTR_HTML: :style margin-left: auto; margin-right: auto;
 [[img/dashLogo.png]]
-* Hydra
-  Testing stuff
-#+BEGIN_SRC emacs-lisp
-  (use-package hydra
-    :ensure t
-    :defer 2
-    :bind ("C-c c" . hydra-clock/body))
-
-  (defhydra hydra-clock (:color blue)
-      "
-      ^
-      ^Clock^             ^Do^
-      ^─────^─────────────^──^─────────
-      _q_ quit            _c_ cancel
-      ^^                  _d_ display
-      ^^                  _e_ effort
-      ^^                  _i_ in
-      ^^                  _j_ jump
-      ^^                  _o_ out
-      ^^                  _r_ report
-      ^^                  ^^
-      "
-      ("q" nil)
-      ("c" org-clock-cancel :color pink)
-      ("d" org-clock-display)
-      ("e" org-clock-modify-effort-estimate)
-      ("i" org-clock-in)
-      ("j" org-clock-goto)
-      ("o" org-clock-out)
-      ("r" org-clock-report))
-#+END_SRC
 
 * General recomendations and references
   This Emacs configuration should work fine on any GNU/Linux distribution, just get the external package dependencies. I cannot guarantee full functionality on others systems without some particular tweaks, but about 70% should work out of the box.
@@ -907,3 +876,35 @@
 (setq large-file-warning-threshold nil)
 #+END_SRC
 
+* Hydra
+  Hydra example
+
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra
+    :ensure t
+    :defer 2
+    :bind ("C-c c" . hydra-clock/body))
+
+  (defhydra hydra-clock (:color blue)
+      "
+      ^
+      ^Clock^             ^Do^
+      ^─────^─────────────^──^─────────
+      _q_ quit            _c_ cancel
+      ^^                  _d_ display
+      ^^                  _e_ effort
+      ^^                  _i_ in
+      ^^                  _j_ jump
+      ^^                  _o_ out
+      ^^                  _r_ report
+      ^^                  ^^
+      "
+      ("q" nil)
+      ("c" org-clock-cancel :color pink)
+      ("d" org-clock-display)
+      ("e" org-clock-modify-effort-estimate)
+      ("i" org-clock-in)
+      ("j" org-clock-goto)
+      ("o" org-clock-out)
+      ("r" org-clock-report))
+#+END_SRC
