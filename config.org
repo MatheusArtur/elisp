@@ -17,7 +17,7 @@
 #+BEGIN_SRC emacs-lisp
   (tool-bar-mode -1)
   (menu-bar-mode -1)
-  (scroll-bar-mode -1) 
+  (scroll-bar-mode -1)
 #+END_SRC
 
 ** Replace Yes/No alias to y/n
@@ -88,8 +88,8 @@
   (column-number-mode 1)
 #+END_SRC
 
-** Functions 
-*** Edit config file function  
+** Functions
+*** Edit config file function
 #+BEGIN_SRC emacs-lisp
   (defun config-visit()
     (interactive)
@@ -307,7 +307,7 @@
     ("C-c q" . 'mark-next-like-this))
 #+END_SRC
 
-* IDO mode, buffer and file navigation 
+* IDO mode, buffer and file navigation
   "C-x b" for default is really bad for navigating in buffers, specially if you are working with a dozen of them. IDO-mode + the ido-vertical-mode package lists all buffers and accept tab completion.
 
 ** Enable IDO mode
@@ -325,7 +325,7 @@
     :init
     (ido-vertical-mode 1))
   (setq ido-vertical-define-keys 'C-n-and-C-p-only)
-#+END_SRC 
+#+END_SRC
 
 ** SMEX, completion for "M-x"
 #+BEGIN_SRC emacs-lisp
@@ -410,7 +410,7 @@
        ([?\C-e] . end)
        ([?\M-v] . prior)
        ([?\C-v] . next)
-       ([?\C-d] . delete) 
+       ([?\C-d] . delete)
        ([?\C-k] . (S-end delete))
        ;; cut/paste
        ([?\C-w] . ?\C-x)
@@ -478,7 +478,7 @@
      (interactive)
      (when window-system
      (message "Cheese!")
-     (start-process "screenshot" nil "import" "-window" "root" 
+     (start-process "screenshot" nil "import" "-window" "root"
                 (concat (getenv "HOME") "/Pictures/Screenshots/" (subseq (number-to-string (float-time)) 0 10) ".png"))
      (message "Screenshot taken!")))
    (global-set-key (kbd "<print>") 'screenshot)
@@ -617,13 +617,13 @@
                '("cpp" "#+BEGIN_SRC c++\n?\n#+END_SRC"))
 #+END_SRC
 
-* Org Agenda 
+* Org Agenda
 
-   My default org files is located on /~/sync/schedules/ and I mainly use =syncthing= to sync the files
-   between computers and mobile. Just change to whatever folder you want to synchronize, it should work perfectly fine with Dropbox too.
+   My default org files is located on /~/Sync/schedules/ and I mainly use =syncthing= to sync the files
+   between computers and mobile. Just change to whatever folder you want to synchronize.
 #+BEGIN_SRC emacs-lisp
   (setq org-agenda-files (append
-			  (file-expand-wildcards "~/sync/schedules/*.org")))
+			  (file-expand-wildcards "~/Sync/schedules/*.org")))
 
   (when window-system (global-set-key (kbd "s-a") 'org-agenda))
  #+END_SRC
@@ -676,8 +676,28 @@
 #+END_SRC
 
 ** C/C++ Packages & Configs
+*** Yasnippet
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c++-mode-hook 'yas-minor-mode)
+(add-hook 'c-mode-hook 'yas-minor-mode)
+#+END_SRC
+
+*** Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck-clang-analyzer
+    :ensure t
+    :config
+    (with-eval-after-load 'flycheck
+      (require 'flycheck-clang-analyzer)
+      (flycheck-clang-analyzer-setup)))
+#+END_SRC
+
 *** Company
 #+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'company
+(add-hook 'c++-mode-hook 'company-mode)
+(add-hook 'c-mode-hook 'company-mode))
+
   (use-package company-c-headers
     :ensure t)
 
@@ -695,54 +715,71 @@
     (add-hook 'c++-mode-hook 'irony-mode)
     (add-hook 'c-mode-hook 'irony-mode)
     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-
-  (with-eval-after-load 'company
-    (add-hook 'c++-mode-hook 'company-mode)
-    (add-hook 'c-mode-hook 'company-mode))
 #+END_SRC
 
-*** Flycheck
+** Python
 #+BEGIN_SRC emacs-lisp
-  (use-package flycheck-clang-analyzer
-    :ensure t
-    :config
-    (with-eval-after-load 'flycheck
-      (require 'flycheck-clang-analyzer)
-      (flycheck-clang-analyzer-setup)))
-#+END_SRC
+(add-hook 'python-mode-hook 'yas-minor-mode)
+(add-hook 'python-mode-hook 'flycheck-mode)
 
-*** Yasnippet
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'c++-mode-hook 'yas-minor-mode)
-  (add-hook 'c-mode-hook 'yas-minor-mode)
+(with-eval-after-load 'company
+    (add-hook 'python-mode-hook 'company-mode))
+
+(use-package company-jedi
+  :ensure t
+  :config
+    (require 'company)
+    (add-to-list 'company-backends 'company-jedi))
+
+(defun python-mode-company-init ()
+  (setq-local company-backends '((company-jedi
+                                  company-etags
+                                  company-dabbrev-code))))
+
+(use-package company-jedi
+  :ensure t
+  :config
+    (require 'company)
+    (add-hook 'python-mode-hook 'python-mode-company-init))
 #+END_SRC
 
 ** Elisp Packages & Configs
-*** Company
-#+BEGIN_SRC emacs-lisp
-   (add-hook 'emacs-lisp-mode-hook 'company-mode)
 
-  (use-package slime
-      :ensure t
-      :config
-      (setq inferior-lisp-program "/usr/bin/sbcl")
-      (setq slime-contribs '(slime-fancy)))
-
-    (use-package slime-company
-      :ensure t
-      :init
-        (require 'company)
-        (slime-setup '(slime-fancy slime-company)))
-#+END_SRC
-
-*** Yasnippet
-#+BEGIN_SRC emacs-lisp
- (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
-#+END_SRC
-
-*** Eldoc mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'company-mode)
+
+(use-package slime
+  :ensure t
+  :config
+  (setq inferior-lisp-program "/usr/bin/sbcl")
+  (setq slime-contribs '(slime-fancy)))
+
+(use-package slime-company
+  :ensure t
+  :init
+    (require 'company)
+    (slime-setup '(slime-fancy slime-company)))
+#+END_SRC
+
+** Bash
+#+BEGIN_SRC emacs-lisp
+(add-hook 'shell-mode-hook 'yas-minor-mode)
+(add-hook 'shell-mode-hook 'flycheck-mode)
+(add-hook 'shell-mode-hook 'company-mode)
+
+(defun shell-mode-company-init ()
+  (setq-local company-backends '((company-shell
+                                  company-shell-env
+                                  company-etags
+                                  company-dabbrev-code))))
+
+(use-package company-shell
+  :ensure t
+  :config
+    (require 'company)
+    (add-hook 'shell-mode-hook 'shell-mode-company-init))
 #+END_SRC
 
 ** Cheat.sh
@@ -751,27 +788,7 @@
     :ensure t)
 #+END_SRC
 
-** Java
-
-#+BEGIN_SRC emacs-lisp
-  (use-package jdee
-    :ensure t
-    :bind
-    ("C-z" . hydra-jdee/body))
-
-    (defhydra hydra-jdee (:hint nil :exit t)
-    "
-    _c_: Compile project
-    _x_: Run project
-    "  
-      ("c" jdee-compile)
-      ("x" jdee-run)
-
-      ("q" exit)
-      ("z" nil "leave"))
-#+END_SRC
-
-* Media 
+* Media
 ** EMMS
    Why use a external media player for listening music when you can do it within Emacs with EMMS?
 
@@ -908,3 +925,4 @@
       ("o" org-clock-out)
       ("r" org-clock-report))
 #+END_SRC
+
