@@ -46,7 +46,10 @@
  '(custom-enabled-themes (quote (spacemacs-dark)))
  '(custom-safe-themes
    (quote
-    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default))))
+    ("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
+ '(package-selected-packages
+   (quote
+    (lsp-java yasnippet-snippets which-key use-package switch-window sudo-edit spacemacs-theme spaceline smex slime-company projectile pretty-mode popup-kill-ring org-bullets openwith mark-multiple magit linum-relative ido-vertical-mode hydra hungry-delete flycheck-clang-analyzer fancy-battery exwm erc-hl-nicks emms dmenu diminish dashboard company-shell company-jedi company-irony company-c-headers cheat-sh beacon avy))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
