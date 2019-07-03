@@ -206,9 +206,11 @@
      :config
      (dashboard-setup-startup-hook)
      (setq dashboard-startup-banner "~/.emacs.d/img/dashLogo.png")
-     (setq dashboard-items '((recents  . 5)
-                             (projects . 5)))
-     (setq dashboard-banner-logo-title "GNU/Emacs"))
+     (setq dashboard-items '((recents . 5)
+			     (projects . 5)
+			     (agenda . 5)
+			     (bookmarks . 5)))
+	   (setq dashboard-banner-logo-title "GNU/Emacs"))
  #+END_SRC
 
 ** Dmenu
@@ -304,7 +306,8 @@
   (use-package mark-multiple
     :ensure t
     :bind
-    ("C-c q" . 'mark-next-like-this))
+    ("C-c q" . 'mark-next-like-this)
+    ("C-c a" . 'mark-all-like-this))
 #+END_SRC
 
 * IDO mode, buffer and file navigation
@@ -416,7 +419,7 @@
        ([?\C-w] . ?\C-x)
        ([?\M-w] . ?\C-c)
        ([?\C-y] . ?\C-v)
-       ; audio keys
+					  ; audio keys
        ([<XF86AudioMicMute>] . XF86AudioMicMute)
        ([<XF86AudioMute>] . XF86AudioMute)
        ([<XF86AudioLowerVolume>] . XF86AudioLowerVolume)
@@ -424,7 +427,7 @@
        ;; search
        ([?\C-s] . ?\C-f)))
 
-       ; Enables special keyboard keys.
+					  ; Enables special keyboard keys.
     (dolist (k '(XF86AudioLowerVolume
 		 XF86AudioRaiseVolume
 		 XF86PowerOff
@@ -441,11 +444,13 @@
 		 print))
       (cl-pushnew k exwm-input-prefix-keys))
     (exwm-enable))
-
-  (require 'exwm-systemtray)
-  (exwm-systemtray-enable)
 #+END_SRC
-
+** Systemtray
+   for applets in general
+#+BEGIN_SRC emacs-lisp
+(require 'exwm-systemtray)
+(exwm-systemtray-enable)
+#+END_SRC
 ** Lauching programs
    Functions for lauching a browser and locking the screen. Requires a browser and =slock= package.
 #+BEGIN_SRC emacs-lisp
@@ -746,21 +751,21 @@
 ** Elisp Packages & Configs
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
-(add-hook 'emacs-lisp-mode-hook 'company-mode)
+  (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook 'company-mode)
 
-(use-package slime
-  :ensure t
-  :config
-  (setq inferior-lisp-program "/usr/bin/sbcl")
-  (setq slime-contribs '(slime-fancy)))
+  (use-package slime
+    :ensure t
+    :config
+    (setq inferior-lisp-program "/usr/bin/sbcl")
+    (setq slime-contribs '(slime-fancy)))
 
-(use-package slime-company
-  :ensure t
-  :init
-    (require 'company)
-    (slime-setup '(slime-fancy slime-company)))
+  (use-package slime-company
+    :ensure t
+    :init
+      (require 'company)
+      (slime-setup '(slime-fancy slime-company)))
 #+END_SRC
 
 ** Bash
@@ -822,6 +827,8 @@
 
   (add-hook 'lsp-mode-hook #'lsp-lens-mode)
   (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+
+  (setq dap-java-java-command "xterm -e java")
 #+END_SRC
 
 * Media
@@ -914,13 +921,12 @@
       (openwith-mode t)
       (setq openwith-associations '((".pdf" "mupdf" (file))
 				    (".mp4" "mpv" (file))
+				    (".mp3" "mpv" (file))
 				    (".mkv" "mpv" (file))
 				    (".png" "feh" (file))
 				    (".jpeg" "feh" (file))
 				    (".jpg" "feh" (file))
 				    (".gif" "feh" (file)))))
-
-; annoying pop up when oppening a video
 
 #+END_SRC
 
