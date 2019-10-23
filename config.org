@@ -389,11 +389,11 @@
 
 
     (require 'exwm-randr)
-    (setq exwm-randr-workspace-output-plist '(0 "HDMI-2"))
+    (setq exwm-randr-workspace-output-plist '(0 "VGA-1"))
     (add-hook 'exwm-randr-screen-change-hook
 	      (lambda ()
 		(start-process-shell-command
-		 "xrandr" nil "xrandr --output HDMI-2 --left-of LVDS-1 --auto")))
+		 "xrandr" nil "xrandr --output VGA-1 --left-of LVDS-1 --auto")))
     (exwm-enable)
     (exwm-randr-enable)
 
@@ -902,37 +902,13 @@
    Remap ctrl to caps and increases press rate
 #+BEGIN_SRC emacs-lisp
 (shell-command "xset r rate 200 50")
-(shell-command "setxkbmap us -option ctrl:nocaps")
+(shell-command "setxkbmap jp -option ctrl:nocaps")
 #+END_SRC
 
 ** Compton
    By default EXWM tends to flicker a little bit, compton fixes that
 #+BEGIN_SRC emacs-lisp
 (shell-command "compton -b")
-#+END_SRC
-
-* Openwith
-  Use this to lauch external programs
-#+BEGIN_SRC emacs-lisp
-    (use-package openwith
-      :ensure t
-      :init
-      :config
-      (openwith-mode t)
-      (setq openwith-associations '((".pdf" "mupdf" (file))
-				    (".mp4" "mpv" (file))
-				    (".mp3" "mpv" (file))
-				    (".mkv" "mpv" (file))
-				    (".png" "feh" (file))
-				    (".jpeg" "feh" (file))
-				    (".jpg" "feh" (file))
-				    (".gif" "feh" (file)))))
-
-#+END_SRC
-
-** remove large file warning
-#+BEGIN_SRC emacs-lisp
-(setq large-file-warning-threshold nil)
 #+END_SRC
 
 * Hydra
@@ -968,3 +944,32 @@
       ("r" org-clock-report))
 #+END_SRC
 
+* TODO Ja
+#+BEGIN_SRC emacs-lisp
+  (require 'mozc)  ; or (load-file "/path/to/mozc.el")
+  (setq default-input-method "japanese-mozc")
+
+(defun tag-word-or-region (text-begin text-end)
+  "Surround current word or region with given text."
+  (interactive "sStart tag: \nsEnd tag: ")
+  (let (pos1 pos2 bds)
+    (if (and transient-mark-mode mark-active)
+        (progn
+          (goto-char (region-end))
+          (insert text-end)
+          (goto-char (region-beginning))
+          (insert text-begin))
+      (progn
+        (setq bds (bounds-of-thing-at-point 'symbol))
+        (goto-char (cdr bds))
+        (insert text-end)
+        (goto-char (car bds))
+        (insert text-begin)))))
+
+(defun tag-php ()
+  (interactive)
+  (tag-word-or-region "{% trans  \"" "\" %}"))
+
+
+(global-set-key (kbd "C-c t") 'tag-php)
+#+END_SRC
