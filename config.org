@@ -793,69 +793,6 @@
     :ensure t)
 #+END_SRC
 
-* Media
-** EMMS
-   Why use a external media player for listening music when you can do it within Emacs with EMMS?
-
-   Requires =mpd= and =mpc= installed and some system setup. Check out 'daedreth' [[https://www.youtube.com/watch?v%3DxTVN8UDScqk&t%3D931s][Video]] for more info.
-#+BEGIN_SRC emacs-lisp
- (use-package emms
-    :ensure t
-    :config
-      (require 'emms-setup)
-      (require 'emms-player-mpd)
-      (emms-all) ; don't change this to values you see on stackoverflow questions if you expect emms to work
-      (setq emms-seek-seconds 5)
-      (setq emms-player-list '(emms-player-mpd))
-      (setq emms-info-functions '(emms-info-mpd))
-      (setq emms-player-mpd-server-name "localhost")
-      (setq emms-player-mpd-server-port "6601")
-    :bind
-      ("s-m p" . emms)
-      ("s-m b" . emms-smart-browse)
-      ("s-m r" . emms-player-mpd-update-all-reset-cache)
-      ("s-," . emms-previous)
-      ("s-." . emms-next)
-      ("s-p" . emms-pause)
-      ("s-o" . emms-stop))
-
-(setq mpc-host "localhost:6601")
-#+END_SRC
-
-*** Binding functions
-**** Starting music daemon
-#+BEGIN_SRC emacs-lisp
-(defun mpd/start-music-daemon ()
-    "Start MPD, connects to it and syncs the metadata cache."
-    (interactive)
-    (shell-command "mpd")
-    (mpd/update-database)
-    (emms-player-mpd-connect)
-    (emms-cache-set-from-mpd-all)
-    (message "MPD Started!"))
-  (global-set-key (kbd "s-m c") 'mpd/start-music-daemon)
-#+END_SRC
-
-**** Killin' daemon
-#+BEGIN_SRC emacs-lisp
- (defun mpd/kill-music-daemon ()
-    "Stops playback and kill the music daemon."
-    (interactive)
-    (emms-stop)
-    (call-process "killall" nil nil nil "mpd")
-    (message "MPD Killed!"))
-  (global-set-key (kbd "s-m k") 'mpd/kill-music-daemon)
-#+END_SRC
-**** Update playlists
-#+BEGIN_SRC emacs-lisp
- (defun mpd/update-database ()
-    "Updates the MPD database synchronously."
-    (interactive)
-    (call-process "mpc" nil nil nil "update")
-    (message "MPD Database Updated!"))
-  (global-set-key (kbd "s-m u") 'mpd/update-database)
-#+END_SRC
-
 * Startup applications
   This is a little scheme to replace .xinitrc startup application calls. With these calls in the emacs configuration
   there's no need of editing .xinitrc for every machine.
