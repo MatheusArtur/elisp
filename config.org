@@ -497,7 +497,7 @@
                    (concat (getenv "HOME") "/Pictures/Screenshots/" (subseq (number-to-string (float-time)) 0 10) ".png"))
      (call-process "rm" nil nil nil ".newScreen.png"))
      (message "Screenshot taken!"))
-   (global-set-key (kbd "<Scroll_Lock>") 'screenshot-window)
+   (global-set-key (kbd "<XF86Favorites>") 'screenshot-window)
 #+END_SRC
 
 ** Audio controls
@@ -793,44 +793,6 @@
     :ensure t)
 #+END_SRC
 
-** Java
-#+BEGIN_SRC emacs-lisp
-  (require 'cc-mode)
-
-  (use-package lsp-java
-    :ensure t
-    :after lsp
-    :config (add-hook 'java-mode-hook 'lsp))
-
-  (require 'lsp-java)
-
-  (use-package lsp-mode
-    :ensure t)
-
-  (use-package company-lsp
-    :ensure t)
-
-  (use-package lsp-ui
-    :ensure t)
-
-  (use-package dap-mode
-    :ensure t
-    :after lsp-mode
-    :config
-    (dap-mode t)
-    (dap-ui-mode t))
-
-  (use-package dap-java 
-    :after (lsp-java))
-
-  (require 'lsp-java-boot)
-
-  (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-  (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-
-  (setq dap-java-java-command "xterm -e java")
-#+END_SRC
-
 * Media
 ** EMMS
    Why use a external media player for listening music when you can do it within Emacs with EMMS?
@@ -902,13 +864,13 @@
    Remap ctrl to caps and increases press rate
 #+BEGIN_SRC emacs-lisp
 (shell-command "xset r rate 200 50")
-(shell-command "setxkbmap jp -option ctrl:nocaps")
+(shell-command "setxkbmap -model thinkpad60 -layout br -option ctrl:nocaps")
 #+END_SRC
 
 ** Compton
    By default EXWM tends to flicker a little bit, compton fixes that
 #+BEGIN_SRC emacs-lisp
-(shell-command "compton -b")
+(shell-command "picom -b")
 #+END_SRC
 
 * Hydra
@@ -944,32 +906,3 @@
       ("r" org-clock-report))
 #+END_SRC
 
-* TODO Ja
-#+BEGIN_SRC emacs-lisp
-  (require 'mozc)  ; or (load-file "/path/to/mozc.el")
-  (setq default-input-method "japanese-mozc")
-
-(defun tag-word-or-region (text-begin text-end)
-  "Surround current word or region with given text."
-  (interactive "sStart tag: \nsEnd tag: ")
-  (let (pos1 pos2 bds)
-    (if (and transient-mark-mode mark-active)
-        (progn
-          (goto-char (region-end))
-          (insert text-end)
-          (goto-char (region-beginning))
-          (insert text-begin))
-      (progn
-        (setq bds (bounds-of-thing-at-point 'symbol))
-        (goto-char (cdr bds))
-        (insert text-end)
-        (goto-char (car bds))
-        (insert text-begin)))))
-
-(defun tag-php ()
-  (interactive)
-  (tag-word-or-region "{% trans  \"" "\" %}"))
-
-
-(global-set-key (kbd "C-c t") 'tag-php)
-#+END_SRC
