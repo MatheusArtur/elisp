@@ -374,11 +374,11 @@
     (exwm-config-ido)
 
 					  ; Setup the workpasces Mod + 1-9
-    (setq exwm-workspace-number 4)
+    (setq exwm-workspace-number 6)
     (exwm-input-set-key (kbd "s-r") #'exwm-restart)
     (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
     (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
-    (dotimes (i 4)
+    (dotimes (i 6)
       (exwm-input-set-key (kbd (format "s-%d" i))
 			  `(lambda ()
 			     (interactive)
@@ -386,18 +386,6 @@
 
     (push ?\C-q exwm-input-prefix-keys)
     (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
-
-
-    (require 'exwm-randr)
-    (setq exwm-randr-workspace-output-plist '(0 "VGA-1"))
-    (add-hook 'exwm-randr-screen-change-hook
-	      (lambda ()
-		(start-process-shell-command
-		 "xrandr" nil "xrandr --output VGA-1 --left-of LVDS-1 --auto")))
-    (exwm-enable)
-    (exwm-randr-enable)
-
-					  ;	(exwm-enable-ido-workaround)
 
 					  ; Keybinds
     (exwm-input-set-simulation-keys
@@ -460,11 +448,15 @@
 
   (defun launch-browser ()
     (interactive)
-    (exwm-async-run "chromium"))
+    (exwm-async-run "google-chrome-stable"))
 
   (defun launch-lock ()
     (interactive)
     (exwm-async-run "slock"))
+
+  (defun launch-slack ()
+    (interactive)
+    (exwm-async-run "slack"))
 
   (defun launch-wifi ()
     (interactive)
@@ -473,6 +465,7 @@
   (global-set-key (kbd "s-n") 'launch-wifi)
   (global-set-key (kbd "s-i") 'launch-browser)
   (global-set-key (kbd "s-x") 'launch-lock)
+  (global-set-key (kbd "s-s") 'launch-slack)
 #+END_SRC
 
 ** Screenshots with imagemagick
@@ -534,12 +527,12 @@
 
 ** Modeline(spaceline)
 #+BEGIN_SRC emacs-lisp
-    (use-package spaceline
-      :ensure t
-      :config
-      (require 'spaceline-config)
-      (setq powerline-default-separator (quote arrow))
-      (spaceline-spacemacs-theme))
+  (use-package spaceline
+    :ensure t
+    :config
+    (require 'spaceline-config)
+    (setq powerline-default-separator (quote arrow))
+    (spaceline-emacs-theme))
 #+END_SRC
 
 ** Format
@@ -622,6 +615,11 @@
                '("cpp" "#+BEGIN_SRC c++\n?\n#+END_SRC"))
 #+END_SRC
 
+** Collapse org
+   
+#+BEGIN_SRC emacs-lisp
+(setq org-startup-folded t)
+#+END_SRC
 * Org Agenda
 
    My default org files is located on /~/Sync/schedules/ and I mainly use =syncthing= to sync the files
@@ -807,7 +805,7 @@
 ** Compton
    By default EXWM tends to flicker a little bit, compton fixes that
 #+BEGIN_SRC emacs-lisp
-(shell-command "picom -b")
+
 #+END_SRC
 
 * Hydra
@@ -843,3 +841,58 @@
       ("r" org-clock-report))
 #+END_SRC
 
+* Test
+
+Run
+npm install -g @ionic/cli
+npm install -g @angular/cli
+npm install -g @angular/language-service@next typescript @angular/language-server
+
+** Tab width of 2
+#+BEGIN_SRC emacs-lisp
+  (setq typescript-indent-level 2)
+#+END_SRC
+
+** Tide for Typescript
+#+BEGIN_SRC emacs-lisp
+    (use-package tide
+          :ensure t
+      :after (typescript-mode company flycheck)
+      :hook ((typescript-mode . tide-setup)
+	     (typescript-mode . tide-hl-identifier-mode)
+	     (before-save . tide-format-before-save)))
+
+
+  (setq tide-format-options '(:tabSize 2 :indentSize 2))
+#+END_SRC
+
+** LSP Mode for Angular
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :ensure t
+    :init
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+     (typescript-mode . lsp)
+     (html-mode . lsp)
+     ;; if you want which-key integration
+     (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
+
+  ;; optionally
+  (use-package lsp-ui
+    :ensure t
+    :commands lsp-ui-mode)
+  ;; if you are helm user
+  (use-package helm-lsp
+    :ensure t
+    :commands helm-lsp-workspace-symbol)
+  ;; if you are ivy user
+  (use-package lsp-ivy
+    :ensure t
+    :commands lsp-ivy-workspace-symbol)
+  (use-package lsp-treemacs
+    :ensure t
+    :commands lsp-treemacs-errors-list)
+#+END_SRC
