@@ -365,79 +365,86 @@
 
 ** Package
 #+BEGIN_SRC emacs-lisp
-  (use-package exwm
-    :ensure t
-    :config
-    (require 'exwm-config)
-    (fringe-mode 1)
-    (server-start)
-    (exwm-config-ido)
+    (use-package exwm
+      :ensure t
+      :config
+      (require 'exwm-config)
+      (fringe-mode 1)
+      (server-start)
+      (exwm-config-ido)
 
-					  ; Setup the workpasces Mod + 1-9
-    (setq exwm-workspace-number 6)
-    (exwm-input-set-key (kbd "s-r") #'exwm-restart)
-    (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
-    (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
-    (dotimes (i 6)
-      (exwm-input-set-key (kbd (format "s-%d" i))
-			  `(lambda ()
-			     (interactive)
-			     (exwm-workspace-switch-create ,i))))
 
-    (push ?\C-q exwm-input-prefix-keys)
-    (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
+					    ; Setup the workpasces Mod + 1-9
+      (setq exwm-workspace-number 6)
+      (exwm-input-set-key (kbd "s-r") #'exwm-restart)
+      (exwm-input-set-key (kbd "s-k") #'exwm-workspace-delete)
+      (exwm-input-set-key (kbd "s-w") #'exwm-workspace-swap)
+      (dotimes (i 6)
+	(exwm-input-set-key (kbd (format "s-%d" i))
+			    `(lambda ()
+			       (interactive)
+			       (exwm-workspace-switch-create ,i))))
 
-					  ; Keybinds
-    (exwm-input-set-simulation-keys
-     '(
-       ;; movement
-       ([?\C-b] . left)
-       ([?\M-b] . C-left)
-       ([?\C-f] . right)
-       ([?\M-f] . C-right)
-       ([?\C-p] . up)
-       ([?\C-n] . down)
-       ([?\C-a] . home)
-       ([?\C-e] . end)
-       ([?\M-v] . prior)
-       ([?\C-v] . next)
-       ([?\C-d] . delete)
-       ([?\C-k] . (S-end delete))
-       ;; cut/paste
-       ([?\C-w] . ?\C-x)
-       ([?\M-w] . ?\C-c)
-       ([?\C-y] . ?\C-v)
-					  ; audio keys
-       ([<XF86AudioMicMute>] . XF86AudioMicMute)
-       ([<XF86AudioMute>] . XF86AudioMute)
-       ([<XF86AudioLowerVolume>] . XF86AudioLowerVolume)
-       ([<XF86AudioRaiseVolume>] . XF86AudioRaiseVolume)
-       ;; search
-       ([?\C-s] . ?\C-f)))
+      (push ?\C-q exwm-input-prefix-keys)
+      (define-key exwm-mode-map [?\C-q] #'exwm-input-send-next-key)
 
-					  ; Enables special keyboard keys.
-    (dolist (k '(XF86AudioLowerVolume
-		 XF86AudioRaiseVolume
-		 XF86PowerOff
-		 XF86AudioMute
-		 XF86AudioPlay
-		 XF86AudioStop
-		 XF86AudioPrev
-		 XF86AudioNext
-		 XF86ScreenSaver
-		 XF86Launch1
-		 XF68Back
-		 XF86Forward
-		 Scroll_Lock
-		 print))
-      (cl-pushnew k exwm-input-prefix-keys))
-    (exwm-enable))
+      (require 'exwm-randr)
+      (setq exwm-randr-workspace-output-plist '(0 "DP-0"))
+      (exwm-enable)
+      (exwm-randr-enable)
+
+
+					    ; Keybinds
+      (exwm-input-set-simulation-keys
+       '(
+	 ;; movement
+	 ([?\C-b] . left)
+	 ([?\M-b] . C-left)
+	 ([?\C-f] . right)
+	 ([?\M-f] . C-right)
+	 ([?\C-p] . up)
+	 ([?\C-n] . down)
+	 ([?\C-a] . home)
+	 ([?\C-e] . end)
+	 ([?\M-v] . prior)
+	 ([?\C-v] . next)
+	 ([?\C-d] . delete)
+	 ([?\C-k] . (S-end delete))
+	 ;; cut/paste
+	 ([?\C-w] . ?\C-x)
+	 ([?\M-w] . ?\C-c)
+	 ([?\C-y] . ?\C-v)
+					    ; audio keys
+	 ([<XF86AudioMicMute>] . XF86AudioMicMute)
+	 ([<XF86AudioMute>] . XF86AudioMute)
+	 ([<XF86AudioLowerVolume>] . XF86AudioLowerVolume)
+	 ([<XF86AudioRaiseVolume>] . XF86AudioRaiseVolume)
+	 ;; search
+	 ([?\C-s] . ?\C-f)))
+
+					    ; Enables special keyboard keys.
+      (dolist (k '(XF86AudioLowerVolume
+		   XF86AudioRaiseVolume
+		   XF86PowerOff
+		   XF86AudioMute
+		   XF86AudioPlay
+		   XF86AudioStop
+		   XF86AudioPrev
+		   XF86AudioNext
+		   XF86ScreenSaver
+		   XF86Launch1
+		   XF68Back
+		   XF86Forward
+		   Scroll_Lock
+		   print))
+	(cl-pushnew k exwm-input-prefix-keys))
+      (exwm-enable))
 #+END_SRC
 ** Systemtray
    for applets in general
 #+BEGIN_SRC emacs-lisp
-(require 'exwm-systemtray)
-(exwm-systemtray-enable)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable)
 #+END_SRC
 ** Lauching programs
    Functions for lauching a browser and locking the screen. Requires a browser and =slock= package.
@@ -490,7 +497,7 @@
                    (concat (getenv "HOME") "/Pictures/Screenshots/" (subseq (number-to-string (float-time)) 0 10) ".png"))
      (call-process "rm" nil nil nil ".newScreen.png"))
      (message "Screenshot taken!"))
-   (global-set-key (kbd "<XF86Favorites>") 'screenshot-window)
+   (global-set-key (kbd "<mouse-9>") 'screenshot-window)
 #+END_SRC
 
 ** Audio controls
@@ -799,7 +806,7 @@
    Remap ctrl to caps and increases press rate
 #+BEGIN_SRC emacs-lisp
 (shell-command "xset r rate 200 50")
-(shell-command "setxkbmap -model thinkpad60 -layout br -option ctrl:nocaps")
+(shell-command "setxkbmap -option ctrl:nocaps")
 #+END_SRC
 
 ** Compton
